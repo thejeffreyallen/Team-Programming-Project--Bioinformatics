@@ -1,4 +1,138 @@
+import java.util.ArrayList;
 
-public class BTreeNode {
+/**
+ * 
+ * @author Jeff Allen
+ * 
+ *         BTree Node Class to define a node and manage the data within.
+ *
+ */
 
+public class BTreeNode implements Comparable<BTreeNode> {
+
+	private int degree, numKeys, maxKeys, index;
+	private boolean isLeaf, isRoot;
+	private ArrayList<TreeObject> keys;
+	private ArrayList<Integer> childPointers;
+
+	/**
+	 * Constructor
+	 * @param index - index of this node within the b-tree
+	 * @param degree - degree of b-tree
+	 * @param isRoot - indicates whether the node is the root or not
+	 * @param isLeaf - indicates whether the node has any children.
+	 */
+	public BTreeNode(int index, int degree, boolean isRoot, boolean isLeaf) {
+		this.index = index;
+		this.degree = degree;
+		this.isRoot = isRoot;
+		this.isLeaf = isLeaf;
+		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
+	}
+
+	/**
+	 * Increase the count of number of keys stored in node
+	 */
+	public void increaseKeyCount() {
+		numKeys++;
+	}
+
+	/**
+	 * Adds a child pointer to the list of pointers
+	 * 
+	 * @param i - index of child to add
+	 */
+	public void addChild(Integer i) {
+		this.childPointers.add(i);
+	}
+
+	/**
+	 * Add a key to the list of keys
+	 * 
+	 * @param o - TreeObject (key) to add
+	 */
+	public void addKey(TreeObject o) {
+		this.keys.add(o);
+	}
+
+	/**
+	 * Get the index of this node in the b-tree
+	 * 
+	 * @return - index
+	 */
+	public int getIndex() {
+		return this.index;
+	}
+
+	/**
+	 * Find out if the node is full or not
+	 * 
+	 * @return - True if full, false otherwise
+	 */
+	public boolean isFull() {
+		return numKeys == maxKeys;
+	}
+
+	/**
+	 * Get the maximum number of keys the node can hold.
+	 * 
+	 * @return - maxKeys
+	 */
+	public int getMaxKeys() {
+		return this.maxKeys;
+	}
+
+	/**
+	 * Find out if the node is the root of the b-tree
+	 * 
+	 * @return - true if the node is the root, false otherwise
+	 */
+	public boolean isRoot() {
+		return this.isRoot;
+	}
+
+	/**
+	 * Find out if the node has any children
+	 * 
+	 * @return - true if the node has no children, false otherwise
+	 */
+	public boolean isLeaf() {
+		return this.isLeaf;
+	}
+
+	/**
+	 * Set this node as the root of the B-tree
+	 * 
+	 * @param val - Pass in true to set as root, false otherwise
+	 */
+	public void setIsRoot(boolean val) {
+		this.isRoot = val;
+	}
+
+	/**
+	 * Set this node as a leaf node
+	 * 
+	 * @param val - Pass in true to set as leaf node, false otherwise
+	 */
+	public void setIsLeaf(boolean val) {
+		this.isLeaf = val;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < keys.size(); i++) {
+			sb.append(keys.get(i)).append("\n");
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public int compareTo(BTreeNode o) {
+		if (index > o.getIndex()) {
+			return -1;
+		} else if (index < o.getIndex()) {
+			return 1;
+		}
+		return 0;
+	}
 }
