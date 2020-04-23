@@ -24,6 +24,7 @@ public class GeneBankCreateBTree {
             StringBuilder dnaSubStr = new StringBuilder(subSeqLen);
             StringBuilder dnaSubBinary = new StringBuilder(subSeqLen * 2);
             String str;
+
             while (line != null) {
                 if (sequenceFound == true && !line.startsWith("ORIGIN")) {
                     if (line.matches("^//.*")) {
@@ -35,6 +36,7 @@ public class GeneBankCreateBTree {
                     String newline = line.replaceAll("\\s+|\\d+", "").toUpperCase();
                     char[] charArray = newline.toCharArray();
                     int invalidCharCount = 0;
+                    GenBankSwitch key = new GenBankSwitch();
                     for (char c : charArray) {
                         switch (c) {
                             case 'A':
@@ -61,7 +63,7 @@ public class GeneBankCreateBTree {
                         if (dnaSubStr.length() == subSeqLen) {
                             System.out.printf("[%s]%n", dnaSubStr.toString());
                             System.out.printf("Binary : %s%n", dnaSubBinary.toString());
-                            System.out.printf("Key: %s%n", getSubStrkey(dnaSubBinary.toString()));
+                            System.out.printf("Key: %s%n", key.switchStringToLong(dnaSubStr.toString()));
                             dnaSubStr.deleteCharAt(0);
                             dnaSubBinary.delete(0, 2);
                         }
@@ -87,18 +89,6 @@ public class GeneBankCreateBTree {
             }
 
         }
-
-    }
-    private static long getSubStrkey(String bitSequence){
-        long base = 1L;
-        long res = 0L;
-        for (int i = 0; i < bitSequence.length() ;i ++ ){
-            if(bitSequence.charAt(i) == '1'){
-                res = res + base;
-            }
-            base  = (base + 2);
-        }
-        return res;
 
     }
 }
