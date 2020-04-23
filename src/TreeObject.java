@@ -9,16 +9,19 @@
 public class TreeObject {
 	private long data;
 	private int duplicates;
+	private int seqLength;
 
 
 	/**
 	 * Constructor
-	 * @param l the long that the object contains
+	 * @param data the long that the object contains
+	 * @param seqLength the length of the genome sequence
 	 * initializes duplicates to 0
 	 */
-	public TreeObject(long l) {
-		data = l;
-		duplicates = 0;
+	public TreeObject(long data, int seqLength) {
+		this.data = data;
+		this.duplicates = 0;
+		this.seqLength= seqLength;
 		
 	}
 
@@ -63,34 +66,13 @@ public class TreeObject {
 	/**
 	 * @return the genome string and number of duplicates
 	 */
+	
 	public String toString() {
 	String s = "";
-		
-/*
-		for (int i = 0; i < dataString.length() - 1; i = i + 2) {
+		GenBankSwitch convert = new GenBankSwitch();
+		s += convert.switchLongToString(this.data, this.seqLength);
+	
 
-			String check = "";
-			check += dataString.charAt(i);
-			check += dataString.charAt(i + 1);
-			switch (check) {
-			case "00":
-				s += "A";
-				break;
-			case "11":
-				s += "T";
-				break;
-			case "01":
-				s += "C";
-				break;
-			case "10":
-				s += "G";
-				break;
-			default:
-
-			}
-
-		}
-*/
 		return s + " " + getDuplicates();
 	}
 }
