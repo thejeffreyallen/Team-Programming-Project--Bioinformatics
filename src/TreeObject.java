@@ -25,6 +25,16 @@ public class TreeObject {
 		
 	}
 
+	/**
+	 * Constructor
+	 * @param data the long that the object contains
+	 * initializes duplicates to 0
+	 */
+	public TreeObject(long data) {
+		this.data = data;
+		this.duplicates = 0;
+
+	}
 
 	/**
 	 * Increase the number of duplicates of objects

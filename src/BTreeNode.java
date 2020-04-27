@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class BTreeNode implements Comparable<BTreeNode> {
 
-	private int degree, numKeys, maxKeys, index;
+	private int degree, numKeys, maxKeys, index, parent;
 	private boolean isLeaf, isRoot;
 	private ArrayList<TreeObject> keys;
 	private ArrayList<Integer> childPointers;
@@ -30,6 +30,13 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
 	}
 
+	public BTreeNode() {
+		keys = new ArrayList<TreeObject>();
+		childPointers = new ArrayList<Integer>();
+		numKeys = 0;
+		parent = -1;
+	}
+
 	/**
 	 * Increase the count of number of keys stored in node
 	 */
@@ -38,12 +45,82 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	}
 
 	/**
+	 * Decrease the count of number of keys stored in node
+	 */
+	public void decreaseKeyCount() {
+		numKeys--;
+	}
+
+	/**
+	 * Return the number of keys stored in node
+	 * @return key count - number of keys stored in the node
+	 */
+	public int getKeyCount(){
+		return numKeys;
+	}
+
+	/**
+	 * Set the number of keys stored in node
+	 * @param  keyCount - set number of keys stored in the node
+	 */
+	public void setKeyCount(int keyCount){
+		 this.numKeys = keyCount;
+	}
+
+	/**
+	 * Set a parent pointer
+	 *
+	 * @param pointer - int pointer of the parent
+	 */
+	public void setParentPointer(int pointer){
+		this.parent = parent;
+	}
+
+	/**
+	 * get a parent pointer
+	 *
+	 * @return  pointer - int pointer of the parent
+	 */
+	public int getParentPointer(){
+
+		return this.parent = parent;
+	}
+
+	/**
 	 * Adds a child pointer to the list of pointers
 	 * 
 	 * @param i - index of child to add
 	 */
-	public void addChild(Integer i) {
+	public void addChild(int i) {
 		this.childPointers.add(i);
+	}
+
+	/**
+	 * Sets a child pointer to the list of pointers
+	 *
+	 * @param index - index of child to set
+	 * @param pointer - pointer of child to set
+	 */
+	public void setChildPointer(int index, int pointer) {
+		this.childPointers.set(index, pointer);
+	}
+	/**
+	 * returns a child pointer from the list of pointers
+	 *
+	 * @return  index - index of child at an index
+	 */
+	public int getChildPointer(int i) {
+		return childPointers.get(i).intValue();
+	}
+
+	/**
+	 * returns a children from the list of pointers
+	 *
+	 * @return  list - list of child pointers
+	 */
+	public ArrayList getChildren() {
+		ArrayList<Integer> childPointers = this.childPointers;
+		return childPointers;
 	}
 
 	/**
@@ -53,6 +130,26 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 */
 	public void addKey(TreeObject o) {
 		this.keys.add(o);
+	}
+
+	/**
+	 * Set a key in specific index the list
+	 *
+	 * @param obj - TreeObject (key) to add
+	 * @param i - int (i) to add index
+	 */
+	public void setKey(int i, TreeObject obj) {
+		keys.set(i, obj);
+	}
+
+	/**
+	 * Return a key in an index
+	 *
+	 * @return index - return the key
+	 */
+	public TreeObject getKey(int index) {
+		TreeObject obj = keys.get(index);
+		return obj;
 	}
 
 	/**

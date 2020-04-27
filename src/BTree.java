@@ -1,3 +1,5 @@
+import java.util.Collections;
+
 /**
  * BTree class for creating and managing a BTree
  * 
@@ -82,11 +84,57 @@ public class BTree {
 	}
 
 	/**
-	 * 
-	 * @param node - BTreeNode to split
+	 * @param x - BTreeNode (parent)
+	 * @param y - BTreeNode to split (child)
 	 */
-	public void splitChild(BTreeNode node) {
-		//TODO - Add unimplemented method
+	public void splitChild(BTreeNode x, int i, BTreeNode y) {
+		BTreeNode z = null;
+
+		z.setIsLeaf(y.isLeaf());
+
+		// assign n[z] = t-1 ??
+		z.setKeyCount(degree - 1);
+
+		x.setParentPointer(y.getParentPointer());
+
+		// add y's node's second  half to z node and reindex
+		for (int j = 0; j < degree - 1; j++) {
+			// add y's node's second  half to z node and reindex
+			z.setKey(j, y.getKey(j + degree));
+			// update number of keys for z and y
+			z.increaseKeyCount();
+			y.decreaseKeyCount();
+		}
+		//checking if y is a leaf
+		if (y.isLeaf() != true) {
+
+			// reindexing y's childern to z's childen
+			for (int j = 0; j < degree; j++) {
+				z.setChildPointer(i, y.getChildPointer(j + degree));
+				// sort the children Todo test THIS
+				Collections.sort(z.getChildren());
+			}
+		}
+		// n[y] = t-1
+		y.setKeyCount(degree - 1);
+		//10 for loop
+		for (int j = x.getKeyCount(); j > y.getKeyCount(); j++) {
+			x.setChildPointer(j + 1, x.getChildPointer(j));
+		}
+		x.setChildPointer(i + 1, z.getIndex());
+
+		//13 for loop
+		for (int j = x.getKeyCount() - 1; j > y.getKeyCount() - 1; j++) {
+			x.setKey(j + 1, x.getKey(j));
+		}
+		//
+		x.setKey(i, z.getKey(degree - 1));
+		x.setKeyCount(x.getKeyCount() + 1);
+
+		// disk write for y
+		// disk write for z
+		// disk write for x
+
 	}
 
 	/**
