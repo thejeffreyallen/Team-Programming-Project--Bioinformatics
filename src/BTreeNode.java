@@ -36,36 +36,36 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		numKeys = 0;
 		parent = -1;
 	}
-
-	/**
-	 * Increase the count of number of keys stored in node
-	 */
-	public void increaseKeyCount() {
-		numKeys++;
-	}
-
-	/**
-	 * Decrease the count of number of keys stored in node
-	 */
-	public void decreaseKeyCount() {
-		numKeys--;
-	}
-
+	
 	/**
 	 * Return the number of keys stored in node
 	 * @return key count - number of keys stored in the node
 	 */
 	public int getKeyCount(){
-		return numKeys;
+		return this.keys.size();
 	}
 
-	/**
-	 * Set the number of keys stored in node
-	 * @param  keyCount - set number of keys stored in the node
-	 */
-	public void setKeyCount(int keyCount){
-		 this.numKeys = keyCount;
-	}
+//	/**
+//	 * Increase the count of number of keys stored in node
+//	 */
+//	public void increaseKeyCount() {
+//		numKeys++;
+//	}
+
+//	/**
+//	 * Decrease the count of number of keys stored in node
+//	 */
+//	public void decreaseKeyCount() {
+//		numKeys--;
+//	}
+
+//	/**
+//	 * Set the number of keys stored in node
+//	 * @param  keyCount - set number of keys stored in the node
+//	 */
+//	public void setKeyCount(int keyCount){
+//		 this.numKeys = keyCount;
+//	}
 
 	/**
 	 * Set a parent pointer
@@ -73,7 +73,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 * @param pointer - int pointer of the parent
 	 */
 	public void setParentPointer(int pointer){
-		this.parent = parent;
+		this.parent = pointer;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 */
 	public int getParentPointer(){
 
-		return this.parent = parent;
+		return this.parent;
 	}
 
 	/**
@@ -94,7 +94,12 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	public void addChild(int i) {
 		this.childPointers.add(i);
 	}
-
+	
+	public void insertKey(int index, TreeObject k)
+	{
+		this.keys.add(index, k);
+	}
+	
 	/**
 	 * Sets a child pointer to the list of pointers
 	 *
