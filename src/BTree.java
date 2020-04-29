@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -34,7 +35,8 @@ public class BTree {
 	 * 
 	 */
 	public BTree(int degree, String fileName, int seqLength, int cacheSize, int debugLevel) {
-		root = new BTreeNode(nodeCount++, degree, true, true); // index = 0, degree, isRoot, isLeaf
+		//root = new BTreeNode(nodeCount++, degree, true, true); // index = 0, degree, isRoot, isLeaf
+		File file = new File(fileName);
 		this.degree = degree;
 		this.fileName = fileName;
 		this.seqLength = seqLength;
@@ -61,14 +63,16 @@ public class BTree {
 	 *                   (corresponding to the key stored) and frequency in an in
 	 *                   order traversal.
 	 */
-	public BTree(String bTreeFile, int degree, int seqLength, int cacheSize, int debugLevel) {
+	public BTree(File bTreeOnDisk, int degree, int seqLength, int cacheSize, int debugLevel) {
 		this.degree = degree;
-		this.fileName = bTreeFile;
+		this.fileName = bTreeOnDisk.getName();
 		this.seqLength = seqLength;
 		this.cacheSize = cacheSize;
 		this.debugLevel = debugLevel;
 		rw = new BTreeRW(fileName, cacheSize);
 		// TODO - Add unimplemented code
+		
+		
 	}
 
 	/**
@@ -79,7 +83,7 @@ public class BTree {
 		// TODO - Add unimplemented method
 		if (this.root == null) // if tree is initially empty
 		{
-			this.root = new BTreeNode(nodeCount++, this.degree, true, false); // Allocate new node as root
+			this.root = new BTreeNode(nodeCount++, this.degree, true, true); // Allocate new node as root
 			this.root.addKey(k); // key added, done
 		} else// if tree is not empty
 		{
@@ -88,9 +92,8 @@ public class BTree {
 				s.addChild(root.getIndex()); // make the current root a child of s
 				root.setParentPointer(s.getIndex());
 				splitChild(s, root.getIndex(), root); // split the node "root"
-				// TODO find correct child node to insert not full
-				BTreeNode child = null; // need to set to correct child node
-				insertNotFull(child, k);
+			
+				insertNotFull(s, k);
 
 				root = s; // make s the new root
 
@@ -217,5 +220,12 @@ public class BTree {
 		int result = 0;
 		// TODO - add calculations
 		return result;
+	}
+	
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(root.toString());
+		return sb.toString();
 	}
 }
