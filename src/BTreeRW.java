@@ -14,6 +14,8 @@ public class BTreeRW {
 	private String fileName;
 	private int cacheSize;
 	
+	
+	
 	/**
 	 * Constructor
 	 * @param fileName the name of the random access file
@@ -23,6 +25,7 @@ public class BTreeRW {
 	{
 		this.fileName = fileName;
 		this.cacheSize = cacheSize;
+		
 		try {
 			randFile = new RandomAccessFile(fileName, "rw");
 		} catch (FileNotFoundException e) {
@@ -39,30 +42,34 @@ public class BTreeRW {
 	public void diskWrite(BTreeNode n)
 	{
 		cache.addObject(n);
+		int keyCount = n.getKeyCount();
+		int maxKeys = n.getMaxKeys();
 		if(n!=null){
 		try {
+			
+			
 			randFile.seek(n.getIndex());
+			randFile.writeInt(n.getIndex());
+			randFile.writeInt((n.getMaxKeys()+1)/2);
 			randFile.writeBoolean(n.isLeaf());
-			randFile.writeInt(n.getKeyCount());
-			randFile.writeInt(n.getMaxKeys());
+			randFile.writeBoolean(n.isRoot());
 			randFile.writeInt(n.getParentPointer());
-			for(int i =0;i< n.getMaxKeys(); i++){
-				if(i<n.getKeyCount() && !n.isLeaf()){
-					randFile.writeInt(n.getChildPointer(i));
-				} else if(i>=n.getKeyCount() || n.isLeaf()){
-					randFile.writeInt(0);
+			int i;
+			for(i =0; i<maxKeys; i++){
+				if(i<keyCount && !n.isLeaf()){
+				randFile.writeInt(n.getChildPointer(i));
+				} else if(i>=keyCount || n.isLeaf()){
+					randFile.seek(randFile.getFilePointer()+4);
 				}
-				if(i<n.getKeyCount()){
-				randFile.writeLong(n.getKey(i).getKey());
-				randFile.writeInt(n.getKey(i).getDuplicates());
-				} else if(i >= n.getKeyCount() && !n.isLeaf()){
-					randFile.writeLong(0);
+				if(i<keyCount){
+					randFile.writeLong(n.getKey(i).getKey());
+					randFile.writeInt(n.getKey(i).getDuplicates());
 				}
-
 			}
-			if (!n.isLeaf()){
-				randFile.writeInt(n.getChildPointer(n.getMaxKeys()));
+			if(!n.isLeaf()){
+				randFile.writeInt(n.getChildPointer(i));
 			}
+				
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,13 +89,13 @@ public class BTreeRW {
 		if(newNode!=null){
 			return newNode;
 		}
-		newNode = new BTreeNode();
+		
 		try {
 			randFile.seek(pointer);
-			newNode.setIsLeaf(randFile.readBoolean());
-			int keyCount = randFile.readInt();
-			int maxDegree = randFile.readInt();
+			newNode =new BTreeNode(randFile.readInt(), randFile.readInt(), randFile.readBoolean(), randFile.readBoolean());
 			newNode.setParentPointer(randFile.readInt());
+			int keyCount = newNode.getKeyCount();
+			int maxDegree = newNode.getMaxKeys();
 
 			for(int i =0; i<maxDegree; i++){
 				if(i<keyCount && !newNode.isLeaf()){
