@@ -28,6 +28,11 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		this.isRoot = isRoot;
 		this.isLeaf = isLeaf;
 		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
+		
+		keys = new ArrayList<TreeObject>();
+		childPointers = new ArrayList<Integer>();
+		numKeys = 0;
+		parent = -1;
 	}
 
 	public BTreeNode() {
@@ -45,27 +50,27 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		return this.keys.size();
 	}
 
-//	/**
-//	 * Increase the count of number of keys stored in node
-//	 */
-//	public void increaseKeyCount() {
-//		numKeys++;
-//	}
+	/**
+	 * Increase the count of number of keys stored in node
+	 */
+	public void increaseKeyCount() {
+		numKeys++;
+	}
 
-//	/**
-//	 * Decrease the count of number of keys stored in node
-//	 */
-//	public void decreaseKeyCount() {
-//		numKeys--;
-//	}
+	/**
+	 * Decrease the count of number of keys stored in node
+	 */
+	public void decreaseKeyCount() {
+		numKeys--;
+	}
 
-//	/**
-//	 * Set the number of keys stored in node
-//	 * @param  keyCount - set number of keys stored in the node
-//	 */
-//	public void setKeyCount(int keyCount){
-//		 this.numKeys = keyCount;
-//	}
+	/**
+	 * Set the number of keys stored in node
+	 * @param  keyCount - set number of keys stored in the node
+	 */
+	public void setKeyCount(int keyCount){
+		 this.numKeys = keyCount;
+	}
 
 	/**
 	 * Set a parent pointer
@@ -223,7 +228,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < keys.size(); i++) {
-			sb.append(keys.get(i)).append("\n");
+			sb.append(keys.get(i).toString()).append("\n");
 		}
 		return sb.toString();
 	}
