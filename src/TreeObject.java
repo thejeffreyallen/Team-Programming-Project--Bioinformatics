@@ -42,6 +42,12 @@ public class TreeObject {
 	public void incrementDuplicates() {
 		duplicates++;
 	}
+	/**
+	 * sets the number of duplicates
+	 */
+	public void setDuplicates(int i){
+		this.duplicates = i;
+	}
 
 	/**
 	 * @return the long key in the object
