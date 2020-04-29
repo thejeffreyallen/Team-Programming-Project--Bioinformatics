@@ -110,9 +110,9 @@ public class BTree {
 	 */
 	public void insertNotFull(BTreeNode x, TreeObject k) {
 		// TODO - Add unimplemented method
-		int i = x.getKeyCount(); // start at the right most key in node x
+		int i = x.getKeyCount()-1; // start at the right most key in node x
 		if (x.isLeaf()) {
-			while (i >= 0 && k.compareTo(x.getKey(i)) == -1) // find the correct position to insert k
+			while (i >= 1 && k.compareTo(x.getKey(i)) == -1) // find the correct position to insert k
 			{
 				i--;
 			}
@@ -210,6 +210,11 @@ public class BTree {
 	 */
 	public String getFileName() {
 		return this.fileName;
+	}
+	
+	public int getSequenceLength()
+	{
+		return this.seqLength;
 	}
 
 	/**
