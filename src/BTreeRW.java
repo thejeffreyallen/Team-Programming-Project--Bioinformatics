@@ -83,13 +83,14 @@ public class BTreeRW {
 	public BTreeNode diskRead(int pointer)
 	{
 		BTreeNode newNode = null;
+		/*
 		if(cache!=null){
 			newNode = cache.getAtIndex(pointer);
 		}
 		if(newNode!=null){
 			return newNode;
 		}
-		
+		*/
 		try {
 			randFile.seek(pointer);
 			newNode =new BTreeNode(randFile.readInt(), randFile.readInt(), randFile.readBoolean(), randFile.readBoolean());
