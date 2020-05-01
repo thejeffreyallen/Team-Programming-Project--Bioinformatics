@@ -6,13 +6,25 @@ import java.io.IOException;
 public class GeneBankCreateBTree {
     private static String file;
     private static int subSeqLen;
+    public static final int MAX_SEQUENCE_LENGTH = 31;
 
     public static void main(String args[]) {
+
         file = args[2];
         subSeqLen = Integer.parseInt(args[3]);
         // usage
         if (args.length < 3 || args.length > 6) {
             // print usage message
+        }
+        // degree
+        int BTreeDegree;
+        try {
+            int deg = Integer.parseInt(args[1]);
+            if (deg < 0) badUsage();
+            else if (deg == 0) BTreeDegree = getOptimalDegree();
+            else BTreeDegree = deg;
+        } catch (NumberFormatException e) {
+            badUsage();
         }
 
         BufferedReader bReader = null;
@@ -90,5 +102,14 @@ public class GeneBankCreateBTree {
 
         }
 
+    }
+    private static void badUsage() {
+        StringBuilder str = new StringBuilder();
+        str.append("Usage: java GeneBankCreateBTree <cache> <degree> <gbk file> <sequence length> [<cache size>] [<debuglevel>]");
+        System.exit(1);
+    }
+
+    private static int getOptimalDegree(){
+       return 0;
     }
 }

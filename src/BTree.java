@@ -1,6 +1,4 @@
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * BTree class for creating and managing a BTree
@@ -49,7 +47,7 @@ public class BTree {
 	/**
 	 * Secondary constructor - Read and construct a BTree from file
 	 * 
-	 * @param bTreeFile  - file from which to read the tree from
+	 * @param //BTreeFile  - file from which to read the tree from
 	 * @param degree     - degree of the BTree. If value is 0, calculate optimal
 	 *                   degree
 	 * @param seqLength  - how many characters to include when reading. i.e. 3 ---
@@ -77,7 +75,7 @@ public class BTree {
 
 	/**
 	 * 
-	 * @param o - TreeObject to insert
+	 * @param k - TreeObject to insert
 	 */
 	public void insert(TreeObject k) {
 		// TODO - Add unimplemented method
@@ -85,6 +83,8 @@ public class BTree {
 		{
 			this.root = new BTreeNode(nodeCount++, this.degree, true, true); // Allocate new node as root
 			this.root.addKey(k); // key added, done
+			this.root.setKeyCount(1); // set the key count to zero
+
 		} else// if tree is not empty
 		{
 			if (this.root.isFull()) {
@@ -117,6 +117,7 @@ public class BTree {
 				i--;
 			}
 			x.insertKey(i, k); // insert k at index i
+			x.setKeyCount(x.getKeyCount() + 1);// add one to the keyCount
 			rw.diskWrite(x); // write to disk, done.
 		} else {
 			while (i >= 1 && k.compareTo(x.getKey(i)) == -1) { // find the correct position to insert k
@@ -134,57 +135,73 @@ public class BTree {
 		}
 	}
 
+// todo
+//	private int allocateNode(){
+//	}
 	/**
 	 * @param x - BTreeNode (parent)
 	 * @param y - BTreeNode to split (child)
 	 */
-	public void splitChild(BTreeNode x, int i, BTreeNode y) {
-		BTreeNode z = null;
+	public void splitChild(BTreeNode x, int index, BTreeNode y) {
+		// allocate the  new B-Tree
+		BTreeNode zRightNode = new BTreeNode(degree,false, true, fileName, 4);
 
-		z.setIsLeaf(y.isLeaf());
-
-		// assign n[z] = t-1 ??
-		z.setKeyCount(degree - 1);
+		// need to pulls full child
+		zRightNode.setIsLeaf(y.isLeaf());
 
 		x.setParentPointer(y.getParentPointer());
 
-		// add y's node's second half to z node and reindex
-		for (int j = 0; j < degree - 1; j++) {
-			// add y's node's second half to z node and reindex
-			z.setKey(j, y.getKey(j + degree));
-			// update number of keys for z and y
-			z.increaseKeyCount();
-			y.decreaseKeyCount();
+		// add y's node's second half to zRightNode node and reindex
+		for (int j = 1; j < degree ; j++) {
+			// add y's node's second half to zRightNode node and reindex
+			zRightNode.setKey(j, y.getKey(j + degree));
+			// update number of keys for zRightNode and y - Array List updates
 		}
 		// checking if y is a leaf
 		if (y.isLeaf() != true) {
 
-			// reindexing y's childern to z's childen
-			for (int j = 0; j < degree; j++) {
-				z.setChildPointer(i, y.getChildPointer(j + degree));
-				// sort the children Todo test THIS
-				Collections.sort(z.getChildren());
+			// reindexing y's children to zRightNode's children
+			for (int j = 1; j <= degree; j++) {
+				x.setChildPointer(j, x.getChildPointer(j + degree));
 			}
 		}
-		// n[y] = t-1
-		y.setKeyCount(degree - 1);
-		// 10 for loop
-		for (int j = x.getKeyCount(); j > y.getKeyCount(); j++) {
-			x.setChildPointer(j + 1, x.getChildPointer(j));
+		// move the x node child pointers to add the zRight node
+		for(int j = x.getKeyCount() +1; j> index; j--){
+			x.setChildPointer(j+1,x.getChildPointer(j));
 		}
-		x.setChildPointer(i + 1, z.getIndex());
+		//add zRightNode as a child for parent node
+		x.setChildPointer(index + 1, zRightNode.byteOffSet);
 
-		// 13 for loop
-		for (int j = x.getKeyCount() - 1; j > y.getKeyCount() - 1; j++) {
-			x.setKey(j + 1, x.getKey(j));
+		// create a spot for middle object to go up
+		for(int j = x.getKeyCount(); j >= index;j--){
+			x.setKey(j+1, x.getKey(j));
 		}
-		//
-		x.setKey(i, z.getKey(degree - 1));
-		x.setKeyCount(x.getKeyCount() + 1);
+
+		// moving middle objects from y node to x node
+		x.setKey(index, y.getKey(degree));
+		x.setKeyCount(x.getKeyCount()+1);
+
+		for(int j = y.getKeyCount(); j > degree; j--){
+			y.removekey(j);
+		}
+
+		if(!y.isLeaf()){
+			for(int j = y.getNumChildPtrs(); j > degree; j--){
+				y.removeChild(j);
+			}
+		}
+		y.removekey(degree);
+		// update obj counts
+		x.setIsLeaf(false);
+		zRightNode.setKeyCount(degree -1);
+		y.setKeyCount(degree -1);
 
 		// disk write for y
-		// disk write for z
+		rw.diskWrite(y);
+		// disk write for zRightNode
+		rw.diskWrite(zRightNode);
 		// disk write for x
+		rw.diskWrite(x);
 
 	}
 

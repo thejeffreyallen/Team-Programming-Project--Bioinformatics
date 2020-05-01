@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class BTreeNode implements Comparable<BTreeNode> {
 
 	private int degree, numKeys, maxKeys, index, parent;
+	int	byteOffSet; //points to the first byte of the node
 	private boolean isLeaf, isRoot;
 	private ArrayList<TreeObject> keys;
 	private ArrayList<Integer> childPointers;
@@ -35,11 +36,16 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		parent = -1;
 	}
 
-	public BTreeNode() {
+	public BTreeNode(int degree,boolean isRoot, boolean isLeaf, String filename, int byteOffSet) {
+		this.degree = degree;
+		this.isRoot = isRoot;
+		this.isLeaf = isLeaf;
+		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
 		keys = new ArrayList<TreeObject>();
 		childPointers = new ArrayList<Integer>();
 		numKeys = 0;
 		parent = -1;
+		this.byteOffSet = byteOffSet;
 	}
 	
 	/**
@@ -99,12 +105,20 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	public void addChild(int i) {
 		this.childPointers.add(i);
 	}
-	
+
+	public void removeChild(int i) {
+		this.childPointers.remove(i);
+	}
+
+
 	public void insertKey(int index, TreeObject k)
 	{
 		this.keys.add(index, k);
 	}
-	
+
+	public void removekey(int i) {
+		keys.remove(i);
+	}
 	/**
 	 * Sets a child pointer to the list of pointers
 	 *
@@ -123,6 +137,9 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		return childPointers.get(i).intValue();
 	}
 
+	public int getNumChildPtrs(){
+		return childPointers.size() -1;
+	}
 	/**
 	 * returns a children from the list of pointers
 	 *
