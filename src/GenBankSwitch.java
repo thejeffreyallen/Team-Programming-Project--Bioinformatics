@@ -6,6 +6,9 @@
 
 public class GenBankSwitch {
     private long key = 0;
+    public GenBankSwitch(){
+        
+    }
 
     public long getKey() {
         return key;
