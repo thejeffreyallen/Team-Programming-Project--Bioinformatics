@@ -35,11 +35,7 @@ public class Cache<T> {
 		return temp;
 	}
 
-	public T getAtIndex(int i){
-		T retVal = cache.get(i);
-		addObject(retVal);
-		return retVal;
-	}
+	
 
 	/**
 	 * Adds an object to the cache
