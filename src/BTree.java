@@ -83,7 +83,7 @@ public class BTree {
 		{
 			this.root = new BTreeNode(nodeCount++, this.degree, true, true); // Allocate new node as root
 			this.root.addKey(k); // key added, done
-			this.root.setKeyCount(1); // set the key count to zero
+			this.root.setKeyCount(root.getKeyCount()); // set the key count to zero
 
 		} else// if tree is not empty
 		{
@@ -117,7 +117,7 @@ public class BTree {
 				i--;
 			}
 			x.insertKey(i, k); // insert k at index i
-			x.setKeyCount(x.getKeyCount() + 1);// add one to the keyCount
+			x.setKeyCount(x.getKeyCount());// add one to the keyCount
 			rw.diskWrite(x); // write to disk, done.
 		} else {
 			while (i >= 1 && k.compareTo(x.getKey(i)) == -1) { // find the correct position to insert k
