@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class BTreeNode implements Comparable<BTreeNode> {
 
-	private int degree, numKeys, maxKeys, index, parent;
+	private int degree, numKeys, maxKeys, index, parent, nodeLocation;
 	int	byteOffSet; //points to the first byte of the node
 	private boolean isLeaf, isRoot;
 	private ArrayList<TreeObject> keys;
@@ -29,6 +29,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		this.isRoot = isRoot;
 		this.isLeaf = isLeaf;
 		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
+		this.nodeLocation = 0;
 		
 		keys = new ArrayList<TreeObject>();
 		childPointers = new ArrayList<Integer>();
@@ -242,6 +243,22 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		this.isLeaf = val;
 	}
 
+	/**
+	 * Set the location of the node in memory
+	 * 
+	 * @param i the location of the node i memory
+	 */
+	public void setLocation(int i){
+		this.nodeLocation = i;
+	}
+	/**
+	 * 
+	 * @return the location of the node
+	 */
+	public int getLocation(){
+		return nodeLocation;
+	}
+	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < keys.size(); i++) {
