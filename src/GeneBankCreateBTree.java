@@ -1,4 +1,8 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
+public class GeneBankCreateBTree {
 	private static String file;
 	private static int subSeqLen, cacheSize, debugLevel;
 	public static final int MAX_SEQUENCE_LENGTH = 31;
@@ -47,7 +51,7 @@
 		}
 
 		btree = new BTree(BTreeDegree, "test", subSeqLen, cacheSize, debugLevel);
-
+		
 		BufferedReader bReader = null;
 		try {
 			bReader = new BufferedReader(new FileReader(args[2]));
@@ -111,7 +115,7 @@
 
 				}
 				line = bReader.readLine();
-
+				
 			}
 		} catch (IOException e) {
 			System.err.println("ERROR:: Failed to open file '" + file + "' for reading.\n");
@@ -124,6 +128,7 @@
 				System.err.println("ERROR:: Failed to close file '" + file + "'.\n");
 
 			}
+			System.out.println("\nOptimal degree of "+ getOptimalDegree() +" Found");
 
 		}
 
@@ -148,6 +153,7 @@
 			result = (metaData + keys + children + nodes);
 			foundDegree++;
 		}
+		
 		return foundDegree;
 	}
 }

@@ -35,10 +35,6 @@ public class TreeObject {
 		this.duplicates = 0;
 
 	}
-	
-	public void setDuplicates(int i) {
-		this.duplicates = i;
-	}
 
 	/**
 	 * Increase the number of duplicates of objects

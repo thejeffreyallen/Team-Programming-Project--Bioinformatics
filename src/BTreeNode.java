@@ -12,8 +12,8 @@ public class BTreeNode implements Comparable<BTreeNode> {
 
 
 	//Node meta data
-	private int degree, numKeys, maxKeys, index, parent; // Each one, 4 bytes
-	int	byteOffSet; //points to the first byte of the node. 4 bytes
+	private int degree, maxKeys, index, parent; // Each one, 4 bytes
+	//int	byteOffSet; //points to the first byte of the node. 4 bytes
 	private boolean isLeaf, isRoot; // each one, 4 bytes
 	ArrayList<TreeObject> keys; // 12 bytes for each
 	ArrayList<Integer> childPointers; // 4 bytes for each
@@ -36,22 +36,20 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		keys = new ArrayList<TreeObject>();
 		childPointers = new ArrayList<Integer>();
 		//childNodes = new ArrayList<BTreeNode>();
-		numKeys = 0;
 		parent = -1;
 	}
 
-	public BTreeNode(int degree,boolean isRoot, boolean isLeaf, String filename, int byteOffSet) {
-		this.degree = degree;
-		this.isRoot = isRoot;
-		this.isLeaf = isLeaf;
-		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
-		keys = new ArrayList<TreeObject>();
-		childPointers = new ArrayList<Integer>();
-		//childNodes = new ArrayList<BTreeNode>();
-		numKeys = 0;
-		parent = -1;
-		this.byteOffSet = byteOffSet;
-	}
+//	public BTreeNode(int degree,boolean isRoot, boolean isLeaf, String filename, int byteOffSet) {
+//		this.degree = degree;
+//		this.isRoot = isRoot;
+//		this.isLeaf = isLeaf;
+//		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
+//		keys = new ArrayList<TreeObject>();
+//		childPointers = new ArrayList<Integer>();
+//		//childNodes = new ArrayList<BTreeNode>();
+//		parent = -1;
+//		this.byteOffSet = byteOffSet;
+//	}
 	
 	
 	/**
@@ -60,28 +58,6 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 */
 	public int getKeyCount(){
 		return this.keys.size();
-	}
-
-	/**
-	 * Increase the count of number of keys stored in node
-	 */
-	public void increaseKeyCount() {
-		numKeys++;
-	}
-
-	/**
-	 * Decrease the count of number of keys stored in node
-	 */
-	public void decreaseKeyCount() {
-		numKeys--;
-	}
-
-	/**
-	 * Set the number of keys stored in node
-	 * @param  keyCount - set number of keys stored in the node
-	 */
-	public void setKeyCount(int keyCount){
-		 this.numKeys = keyCount;
 	}
 
 	/**
@@ -227,7 +203,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 * @return - true if the node has no children, false otherwise
 	 */
 	public boolean isLeaf() {
-		return this.isLeaf;
+		return this.childPointers.size() == 0;
 	}
 
 	/**
