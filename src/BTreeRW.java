@@ -13,6 +13,7 @@ public class BTreeRW {
 	private Cache<BTreeNode> cache;
 	private String fileName;
 	private int cacheSize;
+	private int seqLength;
 	
 	
 	
@@ -25,6 +26,11 @@ public class BTreeRW {
 	{
 		this.fileName = fileName;
 		this.cacheSize = cacheSize;
+	public BTreeRW(String fileName, int cacheSize, int seqLength)
+	{
+		this.fileName = fileName;
+		this.cacheSize = cacheSize;
+		this.seqLength = seqLength;
 		
 		try {
 			randFile = new RandomAccessFile(fileName, "rw");
@@ -42,6 +48,7 @@ public class BTreeRW {
 	public void diskWrite(BTreeNode n)
 	{
 		cache.addObject(n);
+		//cache.addObject(n);
 		int keyCount = n.getKeyCount();
 		int maxKeys = n.getMaxKeys();
 		if(n!=null){
@@ -54,6 +61,7 @@ public class BTreeRW {
 			randFile.writeBoolean(n.isLeaf());
 			randFile.writeBoolean(n.isRoot());
 			randFile.writeInt(n.getParentPointer());
+			randFile.writeInt(n.keys.size());
 			int i;
 			for(i =0; i<maxKeys; i++){
 				if(i<keyCount && !n.isLeaf()){
@@ -67,6 +75,7 @@ public class BTreeRW {
 				}
 			}
 			if(!n.isLeaf()){
+			if(!n.isLeaf() && i < n.childPointers.size()){
 				randFile.writeInt(n.getChildPointer(i));
 			}
 				
@@ -96,6 +105,7 @@ public class BTreeRW {
 			newNode =new BTreeNode(randFile.readInt(), randFile.readInt(), randFile.readBoolean(), randFile.readBoolean());
 			newNode.setParentPointer(randFile.readInt());
 			int keyCount = newNode.getKeyCount();
+			int keyCount = randFile.readInt();
 			int maxDegree = newNode.getMaxKeys();
 
 			for(int i =0; i<maxDegree; i++){
@@ -106,6 +116,7 @@ public class BTreeRW {
 				}
 				if(i<keyCount){
 					TreeObject t = new TreeObject(randFile.readLong());
+					TreeObject t = new TreeObject(randFile.readLong(), seqLength);
 					t.setDuplicates(randFile.readInt());
 					newNode.addKey(t);
 				}

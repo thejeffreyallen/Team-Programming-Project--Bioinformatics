@@ -10,11 +10,14 @@ import java.util.ArrayList;
 
 public class BTreeNode implements Comparable<BTreeNode> {
 
-	private int degree, numKeys, maxKeys, index, parent;
-	int	byteOffSet; //points to the first byte of the node
-	private boolean isLeaf, isRoot;
-	private ArrayList<TreeObject> keys;
-	private ArrayList<Integer> childPointers;
+
+	//Node meta data
+	private int degree, numKeys, maxKeys, index, parent; // Each one, 4 bytes
+	int	byteOffSet; //points to the first byte of the node. 4 bytes
+	private boolean isLeaf, isRoot; // each one, 4 bytes
+	ArrayList<TreeObject> keys; // 12 bytes for each
+	ArrayList<Integer> childPointers; // 4 bytes for each
+	//ArrayList<BTreeNode> childNodes; // 48 bytes for each
 
 	/**
 	 * Constructor
@@ -32,6 +35,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		
 		keys = new ArrayList<TreeObject>();
 		childPointers = new ArrayList<Integer>();
+		//childNodes = new ArrayList<BTreeNode>();
 		numKeys = 0;
 		parent = -1;
 	}
@@ -43,10 +47,12 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
 		keys = new ArrayList<TreeObject>();
 		childPointers = new ArrayList<Integer>();
+		//childNodes = new ArrayList<BTreeNode>();
 		numKeys = 0;
 		parent = -1;
 		this.byteOffSet = byteOffSet;
 	}
+	
 	
 	/**
 	 * Return the number of keys stored in node
@@ -194,7 +200,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 * @return - True if full, false otherwise
 	 */
 	public boolean isFull() {
-		return numKeys == maxKeys;
+		return keys.size() == maxKeys;
 	}
 
 	/**
