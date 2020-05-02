@@ -7,9 +7,9 @@
  *
  */
 public class TreeObject {
-	private long data;
-	private int duplicates;
-	private int seqLength;
+	private long data; // 8 bytes
+	private int duplicates; // 4 bytes
+	private int seqLength; // 4 bytes
 
 
 	/**
@@ -34,6 +34,10 @@ public class TreeObject {
 		this.data = data;
 		this.duplicates = 0;
 
+	}
+	
+	public void setDuplicates(int i) {
+		this.duplicates = i;
 	}
 
 	/**
