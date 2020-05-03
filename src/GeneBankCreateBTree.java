@@ -170,6 +170,12 @@ public class GeneBankCreateBTree {
     }
 
     private static int getOptimalDegree() {
+        
+        //TODO: calculate the amount of metadata of each node int m = 0;
+        //TODO: calculate the size of each key and TreeObject int s = 0;
+        //TODO: use this formula int retval = (int)Math.floor(((4092-m+s)/(2*s+8)));
+        
+        
         return 0;
     }
 }
