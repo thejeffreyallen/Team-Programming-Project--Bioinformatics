@@ -63,6 +63,11 @@ public class TreeObject {
 		return duplicates;
 	}
 	
+	public void setData(long data)
+	{
+		this.data = data;
+	}
+	
 	/**
 	 * @param t the tree object to compare to
 	 * @return 1 if current object is greater

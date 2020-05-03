@@ -10,73 +10,63 @@ import java.util.ArrayList;
 
 public class BTreeNode implements Comparable<BTreeNode> {
 
-	private int degree, numKeys, maxKeys, index, parent, nodeLocation;
-	int	byteOffSet; //points to the first byte of the node
+	private int degree, numKeys, maxKeys, index, parent, nodeLocation; //is nodeLocation not the same as either index or offset?
+	int byteOffSet; // points to the first byte of the node
 	private boolean isLeaf, isRoot;
-	private ArrayList<TreeObject> keys;
-	private ArrayList<Integer> childPointers;
+	ArrayList<TreeObject> keys;
+	ArrayList<Integer> childPointers;
 
 	/**
 	 * Constructor
-	 * @param index - index of this node within the b-tree
+	 * 
+	 * @param index  - index of this node within the b-tree
 	 * @param degree - degree of b-tree
 	 * @param isRoot - indicates whether the node is the root or not
 	 * @param isLeaf - indicates whether the node has any children.
 	 */
 	public BTreeNode(int index, int degree, boolean isRoot, boolean isLeaf) {
-		this.index = index;
 		this.degree = degree;
+		this.index = index;
 		this.isRoot = isRoot;
 		this.isLeaf = isLeaf;
 		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
 		this.nodeLocation = 0;
-		
-		keys = new ArrayList<TreeObject>();
-		childPointers = new ArrayList<Integer>();
+		keys = new ArrayList<TreeObject>(maxKeys);
+		childPointers = new ArrayList<Integer>(maxKeys + 1);
 		numKeys = 0;
 		parent = -1;
 	}
 
-	public BTreeNode(int degree,boolean isRoot, boolean isLeaf, String filename, int byteOffSet) {
+	public BTreeNode(int degree, boolean isRoot, boolean isLeaf, String filename, int byteOffSet) {
 		this.degree = degree;
 		this.isRoot = isRoot;
 		this.isLeaf = isLeaf;
 		this.maxKeys = (2 * degree) - 1; // max 2t-1 keys for degree t
-		keys = new ArrayList<TreeObject>();
-		childPointers = new ArrayList<Integer>();
+		keys = new ArrayList<TreeObject>(maxKeys);
+		childPointers = new ArrayList<Integer>(maxKeys + 1);
 		numKeys = 0;
 		parent = -1;
 		this.byteOffSet = byteOffSet;
 	}
 	
+	public int getDegree()
+	{
+		return this.degree;
+	}
+	
+	public void setIndex(int i)
+	{
+		this.index = i;
+	}
+	
+
 	/**
 	 * Return the number of keys stored in node
+	 * 
 	 * @return key count - number of keys stored in the node
 	 */
-	public int getKeyCount(){
+	public int getKeyCount() {
 		return this.keys.size();
-	}
-
-	/**
-	 * Increase the count of number of keys stored in node
-	 */
-	public void increaseKeyCount() {
-		numKeys++;
-	}
-
-	/**
-	 * Decrease the count of number of keys stored in node
-	 */
-	public void decreaseKeyCount() {
-		numKeys--;
-	}
-
-	/**
-	 * Set the number of keys stored in node
-	 * @param  keyCount - set number of keys stored in the node
-	 */
-	public void setKeyCount(int keyCount){
-		 this.numKeys = keyCount;
 	}
 
 	/**
@@ -84,16 +74,16 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 *
 	 * @param pointer - int pointer of the parent
 	 */
-	public void setParentPointer(int pointer){
+	public void setParentPointer(int pointer) {
 		this.parent = pointer;
 	}
 
 	/**
 	 * get a parent pointer
 	 *
-	 * @return  pointer - int pointer of the parent
+	 * @return pointer - int pointer of the parent
 	 */
-	public int getParentPointer(){
+	public int getParentPointer() {
 
 		return this.parent;
 	}
@@ -111,40 +101,41 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		this.childPointers.remove(i);
 	}
 
-
-	public void insertKey(int index, TreeObject k)
-	{
+	public void insertKey(int index, TreeObject k) {
 		this.keys.add(index, k);
 	}
 
 	public void removekey(int i) {
 		keys.remove(i);
 	}
+
 	/**
 	 * Sets a child pointer to the list of pointers
 	 *
-	 * @param index - index of child to set
+	 * @param index   - index of child to set
 	 * @param pointer - pointer of child to set
 	 */
 	public void setChildPointer(int index, int pointer) {
 		this.childPointers.set(index, pointer);
 	}
+
 	/**
 	 * returns a child pointer from the list of pointers
 	 *
-	 * @return  index - index of child at an index
+	 * @return index - index of child at an index
 	 */
 	public int getChildPointer(int i) {
 		return childPointers.get(i).intValue();
 	}
 
-	public int getNumChildPtrs(){
-		return childPointers.size() -1;
+	public int getNumChildPtrs() {
+		return childPointers.size() - 1;
 	}
+
 	/**
 	 * returns a children from the list of pointers
 	 *
-	 * @return  list - list of child pointers
+	 * @return list - list of child pointers
 	 */
 	public ArrayList getChildren() {
 		ArrayList<Integer> childPointers = this.childPointers;
@@ -164,7 +155,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 * Set a key in specific index the list
 	 *
 	 * @param obj - TreeObject (key) to add
-	 * @param i - int (i) to add index
+	 * @param i   - int (i) to add index
 	 */
 	public void setKey(int i, TreeObject obj) {
 		keys.set(i, obj);
@@ -195,7 +186,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 * @return - True if full, false otherwise
 	 */
 	public boolean isFull() {
-		return numKeys == maxKeys;
+		return keys.size() == 2*degree-1;
 	}
 
 	/**
@@ -258,7 +249,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	public int getLocation(){
 		return nodeLocation;
 	}
-	
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < keys.size(); i++) {
