@@ -118,6 +118,7 @@ public class BTree {
 			}
 			x.insertKey(i, k); // insert k at index i
 			x.setKeyCount(x.getKeyCount());// add one to the keyCount
+			x.setLocation(i); // location of the node in the tree todo test!
 			rw.diskWrite(x); // write to disk, done.
 		} else {
 			while (i >= 1 && k.compareTo(x.getKey(i)) == -1) { // find the correct position to insert k
