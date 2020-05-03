@@ -165,7 +165,7 @@ public class BTree {
 
 		zRightNode.setParentPointer(y.getParentPointer());
 
-		for (int j = 0; j < degree - 1; j++) {
+		for (int j = 0; j < degree - 2; j++) {
 			zRightNode.keys.add(y.keys.remove(j + (degree - 1)));
 		}
 		// checking if y is a leaf
