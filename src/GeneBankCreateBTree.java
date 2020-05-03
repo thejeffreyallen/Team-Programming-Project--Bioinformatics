@@ -12,6 +12,7 @@ public class GeneBankCreateBTree {
     static int cacheSize;
     static boolean withCache;
     static int debugLevel;
+    static int BTreeDegree;
 
     public static void main(String args[]) {
 
@@ -20,7 +21,7 @@ public class GeneBankCreateBTree {
             badUsage();
         }
         // degree
-        int BTreeDegree;
+
         try {
             int degree = Integer.parseInt(args[1]);
             if (degree < 0) badUsage();
@@ -81,7 +82,7 @@ public class GeneBankCreateBTree {
         BufferedReader bReader = null;
         try {
             //RandomAccessFile randomAccess = new RandomAccessFile(file, "rw");
-            tree = new BTree(degree, file, subSeqLen, 0, debugLevel);
+            tree = new BTree(BTreeDegree, file, subSeqLen, 0, debugLevel);
             bReader = new BufferedReader(new FileReader(file));
             boolean sequenceFound = false;
             String line = null;
@@ -127,9 +128,9 @@ public class GeneBankCreateBTree {
                                 dnaSubBinary.setLength(0);
                         }
                         if (dnaSubStr.length() == subSeqLen) {
-                            //  long numb = key.switchStringToLong(dnaSubStr.toString());
-                            //  object = new TreeObject(numb);
-                            //  tree.insert(object);
+                              long numb = key.switchStringToLong(dnaSubStr.toString());
+                              object = new TreeObject(numb);
+                              tree.insert(object);
 
                             System.out.printf("[%s]%n", dnaSubStr.toString());
                             System.out.printf("Binary : %s%n", dnaSubBinary.toString());
