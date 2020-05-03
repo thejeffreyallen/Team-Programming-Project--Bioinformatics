@@ -1,6 +1,9 @@
 import java.util.Scanner;
 
 public class GeneBankSearch {
+    private static int sequenceLength;
+    private static Cache cache;
+    private static int degree;
     public static void main(String args[]) {
 
         if (args.length < 3 || args.length > 5) {
@@ -9,13 +12,13 @@ public class GeneBankSearch {
         boolean isCache;
         String treeFile = args[1];
         String query = args[2];
-        int sequenceLength = 0;
+        sequenceLength = 0;
         if(Integer.parseInt(args[0])==1){
             isCache= true;
         } else{
             isCache = false;
         }
-        Cache cache= null;
+        cache= null;
         if(isCache && args[4]!=null){
             cache = new Cache(Integer.parseInt(args[4]));
         }
@@ -31,7 +34,7 @@ public class GeneBankSearch {
                 break;
             }
         }
-        int degree=((sequenceLength+1)/2);
+        degree=((sequenceLength+1)/2);
 
         BTree b = new BTree(degree, treeFile, sequenceLength, cache.getSize(), 0);
         Scanner fileScan = new Scanner(query);
@@ -39,14 +42,31 @@ public class GeneBankSearch {
             Long queryData = genSwitch.switchStringToLong(fileScan.nextLine());
             TreeObject t = new TreeObject(queryData);
             
-            search(b, t);
+            TreeObject result = search(b.getRoot(), t);
+            if(result!=null){
+                System.out.println(result.toString());
+            }
 
         }
     }
     }
 
-    private static void search(BTree tree, TreeObject t){
-        
+    private static TreeObject search(BTreeNode root, TreeObject t){
+       int i =0;
+       BTreeRW diskWriter = new BTreeRW("diskWrite", cache.getSize(), sequenceLength);
+       while(i<root.getKeyCount() && (t.compareTo(root.getKey(i))>0)){
+           i++;
+       }
+           if(i<root.getKeyCount() && t.compareTo(root.getKey(i))==0){
+               return root.getKey(i);
+           }
+           if(root.isLeaf()){
+               return null;
+           } else{
+               BTreeNode child = diskWriter.diskRead(root.getChildPointer(i), degree);
+               return search(child, t);
+           }
+           
        
     }
 }
