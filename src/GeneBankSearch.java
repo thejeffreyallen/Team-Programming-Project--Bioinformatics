@@ -1,45 +1,70 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class GeneBankSearch {
     private static int sequenceLength;
     private static Cache cache;
     private static int degree;
+    private static File treeFile;
+    private static File query;
+    private static boolean isCache;
     public static void main(String args[]) {
 
         if (args.length < 3 || args.length > 5) {
             System.out.println("Java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]");
         } else {
         boolean isCache;
-        String treeFile = args[1];
-        String query = args[2];
+        treeFile = new File(args[1]);
+        query = new File(args[2]);
         sequenceLength = 0;
+
+        isCache=false;
+        try{
         if(Integer.parseInt(args[0])==1){
             isCache= true;
-        } else{
-            isCache = false;
-        }
+        } 
+    } catch(NumberFormatException e){
+        System.out.println(printUsage());
+    }
+
         cache= null;
+        try{
         if(isCache && args[4]!=null){
             cache = new Cache(Integer.parseInt(args[4]));
         }
+    } catch(NumberFormatException e){
+        System.out.println(printUsage());
+    }
 
-        GenBankSwitch genSwitch = new GenBankSwitch();
+        
 
-        for(int i =0; i<treeFile.length(); i++){
-            if(treeFile.charAt(i)!=','){
-                i++;
+        Scanner treeScan;
+        int count= 0;
+        try {
+            treeScan = new Scanner(treeFile);
+            while(treeScan.hasNext()){
+                if(treeScan.next().charAt(count)==','){
+                    break;
+                } else{
+                    sequenceLength++;
+                }
+                count++;
             }
-            if(treeFile.charAt(i)==','){
-                sequenceLength = i;
-                break;
-            }
+            treeScan.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.out.println(printUsage());
         }
+       
         degree=((sequenceLength+1)/2);
 
-        BTree b = new BTree(degree, treeFile, sequenceLength, cache.getSize(), 0);
-        Scanner fileScan = new Scanner(query);
-        while(fileScan.hasNextLine()){
-            Long queryData = genSwitch.switchStringToLong(fileScan.nextLine());
+        BTree b = new BTree(degree, args[2], sequenceLength, cache.getSize(), 0);
+        GenBankSwitch genSwitch = new GenBankSwitch();
+    try{
+        Scanner queryScan = new Scanner(query);
+        while(queryScan.hasNextLine()){
+            Long queryData = genSwitch.switchStringToLong(queryScan.nextLine());
             TreeObject t = new TreeObject(queryData);
             
             TreeObject result = search(b.getRoot(), t);
@@ -48,6 +73,11 @@ public class GeneBankSearch {
             }
 
         }
+        queryScan.close();
+    } catch(FileNotFoundException e){
+        e.printStackTrace();
+        System.out.println(printUsage());
+    }
     }
     }
 
@@ -68,5 +98,10 @@ public class GeneBankSearch {
            }
            
        
+    }
+
+    private static String printUsage(){
+        String s =   "Java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]";
+        return s;
     }
 }
