@@ -129,8 +129,7 @@ public class GeneBankCreateBTree {
                         }
                         if (dnaSubStr.length() == subSeqLen) {
                               long numb = key.switchStringToLong(dnaSubStr.toString());
-                              object = new TreeObject(numb);
-                              tree.insert(object);
+                              tree.insert(new TreeObject(numb, subSeqLen));
 
                             System.out.printf("[%s]%n", dnaSubStr.toString());
                             System.out.printf("Binary : %s%n", dnaSubBinary.toString());
@@ -158,6 +157,7 @@ public class GeneBankCreateBTree {
                 System.err.println("ERROR:: Failed to close file '" + file + "'.\n");
 
             }
+            System.out.println(tree.toString());
 
         }
 

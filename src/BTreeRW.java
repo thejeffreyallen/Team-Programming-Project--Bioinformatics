@@ -1,5 +1,6 @@
 
 import java.io.*;
+import java.nio.ByteBuffer;
 
 /**
  * 
@@ -36,17 +37,21 @@ public class BTreeRW {
 		cache = new <BTreeNode>Cache(cacheSize);
 	}
 
-	/** Writes metaData to file
+	/**
+	 * Writes metaData to file
 	 * 
 	 * @param tree - tree metaData to write
 	 */
 	public void writeMetaData(BTree tree) {
 		try {
-			randFile.seek(0L);
+			randFile.seek(0);
+			// randFile.writeUTF("METADATA"); // For debugging
 			randFile.writeInt(tree.getSequenceLength());
 			randFile.writeInt(tree.getHeight());
 			randFile.writeInt(tree.getRoot().getDegree());
+			randFile.seek(12);
 			diskWrite(tree.getRoot());
+			// randFile.writeUTF("END"); // For debugging
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,62 +60,65 @@ public class BTreeRW {
 	}
 
 	/**
-	 * Total size of a node n on disk
-	 * 
-	 * @param n - node to calculate size
-	 * @return
-	 */
-	public int nodeSizeOnDisk(BTreeNode n) {
-		return 24 + (8 * n.keys.size()) + (4 * (n.keys.size()) + 1);
-	}
-
-	/**
-	 *  Jeff's method to write the metadata of a BTreeNode to a file
+	 * Jeff's method to write the metadata of a BTreeNode to a file
 	 * 
 	 * @param n the BTreeNode to write to a disk
 	 */
 	public void diskWrite(BTreeNode n) {
 		if (n != null) {
 			try {
+				if (n.isRoot())
+					randFile.seek(12);
+				else
+					randFile.seek(getOffset(n.getIndex(), n.getDegree()));
 
-				// seek to node n offset
-				randFile.seek(getOffset(n.getIndex(), n.getDegree()));
-				
-				// Write bytes to file 
+				// Write bytes to file
+				//randFile.writeUTF("NODE START"); // For debugging
 				randFile.writeInt(n.getIndex());
 				randFile.writeBoolean(n.isLeaf());
 				randFile.writeBoolean(n.isRoot());
 				randFile.writeInt(n.getParentPointer());
 				randFile.writeInt(n.keys.size());
 				randFile.writeInt(n.childPointers.size());
-				
-				// write the same amount of data regardless of children / keys for easy calculation of offset
-				for (int i = 0; i < (2 * n.getDegree() - 1) + 1; i++) {
+
+				// write the same amount of data regardless of children / keys for easy
+				// calculation of offset
+				for (int i = 0; i < (2 * n.getDegree()); i++) {
 					if (i < n.childPointers.size()) {
 						randFile.writeInt(n.childPointers.get(i));
 					} else {
 						randFile.writeInt(-1);
 					}
-					
+
 				}
 				for (int j = 0; j < 2 * n.getDegree() - 1; j++) {
 					if (j < n.keys.size()) {
 						randFile.writeLong(n.keys.get(j).getKey());
+						randFile.writeInt(n.keys.get(j).getDuplicates());
+//						System.out.println(n.keys.get(j).getDuplicates());
 					} else {
-						randFile.writeLong(-1L);
+						randFile.writeLong(-1);
+						randFile.writeInt(-1);
 					}
 				}
+
+				//randFile.writeUTF("END"); // For debugging
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+//			System.out.println("------");
+//			System.out.println(n.toString());
+//			System.out.println("------");
 		}
+
 	}
 
-	/** Jeff's method to read and return a node from disk
+	/**
+	 * Jeff's method to read and return a node from disk
 	 * 
-	 * @param index - index of node. Offset will be calculated from this.
+	 * @param index  - index of node. Offset will be calculated from this.
 	 * @param degree - degree of tree. Offset calculation also depends on this.
 	 * @return
 	 */
@@ -118,49 +126,57 @@ public class BTreeRW {
 		BTreeNode newNode = new BTreeNode(index, degree, false, false);
 
 		try {
-			randFile.seek(getOffset(index, degree));
-			newNode.setIndex(randFile.readInt());
-			newNode.setIsLeaf(randFile.readBoolean());
-			newNode.setIsRoot(randFile.readBoolean());
-			newNode.setParentPointer(randFile.readInt());
-			int numKeys = randFile.readInt();
-			int numChildPointers = randFile.readInt();
-			TreeObject tempObject = new TreeObject(0L, seqLength);
-			for (int j = 0; j < numKeys; j++) {
-				newNode.addKey(tempObject);
-			}
-			for (int i = 0; i < (2 * degree - 1) + 1; i++) {
-				if (i < numChildPointers) {
-					newNode.addChild(randFile.readInt());
-				} else {
-					randFile.readInt();
+			if (index > 0) {
+				randFile.seek(getOffset(index, degree));
+				//randFile.readUTF(); // for debugging
+				newNode.setIndex(randFile.readInt());
+				newNode.setIsLeaf(randFile.readBoolean());
+				newNode.setIsRoot(randFile.readBoolean());
+				newNode.setParentPointer(randFile.readInt());
+				int numKeys = randFile.readInt();
+				int numChildPointers = randFile.readInt();
+				for (int j = 0; j < numKeys; j++) {
+					newNode.keys.add(j, new TreeObject(0L, seqLength));
+				}
+				for (int i = 0; i < (2 * degree - 1) + 1; i++) {
+					if (i < numChildPointers) {
+						newNode.addChild(randFile.readInt());
+					} else {
+						randFile.readInt();
+					}
+				}
+
+				for (int j = 0; j < 2 * degree - 1; j++) {
+					if (j < numKeys) {
+						newNode.keys.get(j).setData(randFile.readLong());
+						newNode.keys.get(j).setDuplicates(randFile.readInt());
+					} else {
+						randFile.readLong();
+						randFile.readInt();
+					}
 				}
 			}
-
-			for (int j = 0; j < 2 * degree - 1; j++) {
-				if (j < numKeys) {
-					newNode.keys.get(j).setData(randFile.readLong());
-				} else {
-					randFile.readLong();
-				}
-			}
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(newNode.keys.size() == 0)
+			return null;
+//		System.out.println("------");
+//		System.out.println(newNode.toString());
+//		System.out.println("------");
 
 		return newNode;
 	}
 
 	public int nodeSizeOnDisk(int degree) {
-		return (28 + (12 * (2 * degree - 1)) + (4 * (2 * degree - 1) + 1));
+		return (18 + 12 * (2 * degree - 1) + 4 * (2 * degree));
 	}
 
 	public int getOffset(int index, int degree) {
-		return 12 + nodeSizeOnDisk(degree) + index * nodeSizeOnDisk(degree);
+		return 12 + nodeSizeOnDisk(degree) + (index - 1) * nodeSizeOnDisk(degree);
 	}
-	
+
 //	/**
 //	 * Writes the metadata of a BTreeNode to a file
 //	 * 

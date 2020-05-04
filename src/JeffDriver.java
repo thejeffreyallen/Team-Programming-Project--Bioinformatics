@@ -3,7 +3,7 @@ import java.io.IOException;
 public class JeffDriver {
 	public static void main(String[] args) throws IOException
 	{
-		BTree tree = new BTree(3, "test", 3, 100, 0);
+		BTree tree = new BTree(5, "test", 3, 100, 0);
 		TreeObject o = new TreeObject(32L, tree.getSequenceLength()); //GAA
 		TreeObject o1 = new TreeObject(38L, tree.getSequenceLength()); //GCG
 		TreeObject o2 = new TreeObject(40L, tree.getSequenceLength()); //GGA
@@ -43,15 +43,31 @@ public class JeffDriver {
 		tree.insert(o13);
 		tree.insert(o14);
 		tree.insert(o15);
+		tree.insert(o);
+		tree.insert(o1);
+		tree.insert(o2);
+		tree.insert(o3);
+		tree.insert(o4);
+		tree.insert(o5);
+		tree.insert(o6);
+		tree.insert(o7);
+		tree.insert(o8);
+		tree.insert(o9);
+		tree.insert(o10);
+		tree.insert(o11);
+		tree.insert(o12);
+		tree.insert(o13);
+		tree.insert(o14);
+		tree.insert(o15);
 		
 		
 		
 		
 		
+		tree.writeRootToFile();
 		
 		
-		
-		System.out.println(tree.printTree(tree.getRoot()));
+		System.out.println(tree.toString());
 		System.out.println("Optimal degree of " + tree.calculateDegree() +" found");
 	}
 }

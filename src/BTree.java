@@ -1,4 +1,6 @@
 import java.io.File;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * BTree class for creating and managing a BTree
@@ -35,17 +37,18 @@ public class BTree {
 	public BTree(int degree, String fileName, int seqLength, int cacheSize, int debugLevel) {
 		// root = new BTreeNode(nodeCount++, degree, true, true); // index = 0, degree,
 		// isRoot, isLeaf
+		nodeCount = -1;
 		File file = new File(fileName);
 		file.delete();
+		
 		this.degree = degree;
 		this.fileName = fileName;
 		this.seqLength = seqLength;
 		this.cacheSize = cacheSize;
 		this.debugLevel = debugLevel;
 		rw = new BTreeRW(fileName, cacheSize, seqLength);
-		this.root = new BTreeNode(nodeCount++, degree, true, true);
-		rw.writeMetaData(this);
-
+		this.root = new BTreeNode(0, degree, true, true);
+		nodeCount++;
 		// rw.writeMetaData(degree, root, seqLength);
 		// TODO - Add unimplemented code
 	}
@@ -77,6 +80,11 @@ public class BTree {
 		// TODO - Add unimplemented code
 
 	}
+	
+	public void writeRootToFile()
+	{
+		rw.writeMetaData(this);
+	}
 
 	/**
 	 * 
@@ -86,14 +94,16 @@ public class BTree {
 		// TODO - Add unimplemented method
 		BTreeNode r = root;
 		if (r.isFull()) {
-			BTreeNode s = new BTreeNode(nodeCount++, degree, true, false); // Allocate new node
-
+			BTreeNode s = new BTreeNode(0, degree, true, false); // Allocate new node
+			nodeCount++;
 			root = s; // make s the new root
 			s.setIsLeaf(false);
-			s.childPointers.add(r.getIndex()); // make the current root a child of s
+			
 			// s.childNodes.add(r);
 			r.setParentPointer(s.getIndex());
 			r.setIsRoot(false);
+			r.setIndex(nodeCount);
+			s.childPointers.add(0, r.getIndex()); // make the current root a child of s
 
 			splitChild(s, 0, r); // split the node "root"
 
@@ -113,33 +123,45 @@ public class BTree {
 		// TODO - Add unimplemented method
 		int i = x.getKeyCount() - 1; // start at the right most key in node x
 		long key = k.getKey();
-		boolean foundDup = false;
 		if (x.isLeaf()) {
 			while (i >= 0 && key <= x.getKey(i).getKey()) // find the correct position to insert k
 			{
-				if (k.compareTo(x.getKey(i)) == 0) {
-					x.keys.get(i).incrementDuplicates();
-					foundDup = true;
+				if(key == x.getKey(i).getKey())
+				{
+					x.getKey(i).incrementDuplicates();
+					rw.diskWrite(x);
+					return;
 				}
 				i--;
 			}
-			if (!foundDup) {
-				x.keys.add(i + 1, k); // insert k at index i
-				rw.diskWrite(x); // write to disk, done.
-			}
-			
+			x.insertKey(i + 1, k); // insert k at index i
+			rw.diskWrite(x); // write to disk, done.
+
 		} else {
 			while (i >= 0 && key <= x.getKey(i).getKey()) { // find the correct position to insert k
-				if (k.compareTo(x.getKey(i)) == 0) { // find the correct position to insert k
-					x.keys.get(i).incrementDuplicates();
+				if(key == x.getKey(i).getKey())
+				{
+					x.getKey(i).incrementDuplicates();
+					rw.diskWrite(x);
+					return;
 				}
 				i--;
 			}
 			i++; // line 11 - in class b-tree pseudo-code
 			BTreeNode c = rw.diskRead(x.getChildPointer(i), this.degree); // read child node from disk at offset i
+			for(int j = 0; j < c.keys.size(); j++)
+			{
+				if(key == c.getKey(j).getKey())
+				{
+					c.getKey(j).incrementDuplicates();
+					rw.diskWrite(c);
+					return;
+				}
+			}
 			if (c.isFull()) { // if node is full
 				splitChild(x, i, c); // split node
-				if (k.compareTo(x.keys.get(i)) == -1) {
+				if (key > x.keys.get(i).getKey()) {
+					
 					i++;
 				}
 				c = rw.diskRead(x.getChildPointer(i), this.degree);
@@ -161,12 +183,12 @@ public class BTree {
 	 */
 	public void splitChild(BTreeNode x, int index, BTreeNode y) {
 
-		BTreeNode zRightNode = new BTreeNode(nodeCount++, degree, false, y.isLeaf()); // allocate the new B-Tree node
-
+		BTreeNode zRightNode = new BTreeNode(y.getIndex() + 1, degree, false, y.isLeaf()); // allocate the new B-Tree node
+		nodeCount++;
 		zRightNode.setParentPointer(y.getParentPointer());
 
-		for (int j = 0; j < degree - 2; j++) {
-			zRightNode.keys.add(y.keys.remove(j + (degree - 1)));
+		for (int j = y.keys.size() - 1; j >= degree - 1; j--) {
+			zRightNode.insertKey(0, y.keys.remove(j));
 		}
 		// checking if y is a leaf
 		if (y.isLeaf() != true) {
@@ -178,12 +200,12 @@ public class BTree {
 		for (int j = x.keys.size(); j > index; j--) {
 			x.childPointers.set(j + 1, x.childPointers.remove(j));
 		}
-		x.childPointers.add(index+1, zRightNode.getIndex());
-		for(int j = x.keys.size(); j > index; j--)
-		{
+		x.childPointers.add(index + 1, zRightNode.getIndex());
+		System.out.println("Working");
+		for (int j = x.keys.size(); j > index; j--) {
 			x.keys.set(j + 1, x.keys.remove(j));
 		}
-		x.keys.add(index, y.keys.remove(degree-1));
+		x.insertKey(index, y.keys.remove(degree - 2));
 		// disk write for y
 		rw.diskWrite(y);
 		// disk write for zRightNode
@@ -296,10 +318,10 @@ public class BTree {
 		int blockSize = 4096;
 		while (result < blockSize) {
 
-			int keys = 12 * (2 * foundDegree - 1);
+			int keys = 18 * (2 * foundDegree - 1);
 			int children = 4 * keys + 1;
-			int nodes = 48 * children;
-			int metaData = 24 + keys + children;
+			int nodes = (18 + 8 * (2 * degree - 1)) + 4 * (2 * degree) * children;
+			int metaData = 12 + (18 + 8 * (2 * degree - 1)) + 4 * (2 * degree);
 			result = (metaData + keys + children + nodes);
 			foundDegree++;
 		}
@@ -307,12 +329,7 @@ public class BTree {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(root.toString()).append("root\n\n");
-		for (int i = 0; i < root.childPointers.size(); i++) {
-			sb.append(rw.diskRead(root.getChildPointer(i), degree).toString()).append("child " + i + "\n\n");
-		}
-		return sb.toString();
+		return printTree(this.root);
 	}
 
 	/**
@@ -322,17 +339,20 @@ public class BTree {
 	 * @return
 	 */
 	public String printTree(BTreeNode t) {
+		if(t == null)
+			throw new IllegalStateException();
 		StringBuilder sb = new StringBuilder();
 		BTreeNode next = null;
-		sb.append("______\n\n").append(t.toString()).append("______\n");
+		if(t.isRoot())
+			sb.append("______\n\n").append(t.toString()).append("______\n"+"ROOT\n");
+		else
+			sb.append("______\n\n").append(t.toString()).append("______\n"+"Node: "+t.getIndex()+"\n");
 		for (int i = 0; i < t.childPointers.size(); i++) {
 			next = rw.diskRead(t.childPointers.get(i), degree);
-			sb.append(next.toString()).append("______\n\n");
 			if (next.isLeaf()) {
 				sb.append(printTree(next));
 			}
 		}
-
 		return sb.toString();
 	}
 }
