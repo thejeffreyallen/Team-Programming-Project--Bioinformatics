@@ -102,7 +102,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	}
 
 	public void insertKey(int index, TreeObject k) {
-		this.keys.add(index, k);
+			this.keys.add(index, k);
 	}
 
 	public void removekey(int i) {
@@ -138,7 +138,6 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 * @return list - list of child pointers
 	 */
 	public ArrayList getChildren() {
-		ArrayList<Integer> childPointers = this.childPointers;
 		return childPointers;
 	}
 
