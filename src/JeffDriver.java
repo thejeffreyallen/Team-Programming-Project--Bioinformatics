@@ -43,22 +43,22 @@ public class JeffDriver {
 		tree.insert(o13);
 		tree.insert(o14);
 		tree.insert(o15);
-//		tree.insert(o);
-//		tree.insert(o1);
-//		tree.insert(o2);
-//		tree.insert(o3);
-//		tree.insert(o4);
-//		tree.insert(o5);
-//		tree.insert(o6);
-//		tree.insert(o7);
-//		tree.insert(o8);
-//		tree.insert(o9);
-//		tree.insert(o10);
-//		tree.insert(o11);
-//		tree.insert(o12);
-//		tree.insert(o13);
-//		tree.insert(o14);
-//		tree.insert(o15);
+		tree.insert(o);
+		tree.insert(o1);
+		tree.insert(o2);
+		tree.insert(o3);
+		tree.insert(o4);
+		tree.insert(o5);
+		tree.insert(o6);
+		tree.insert(o7);
+		tree.insert(o8);
+		tree.insert(o9);
+		tree.insert(o10);
+		tree.insert(o11);
+		tree.insert(o12);
+		tree.insert(o13);
+		tree.insert(o14);
+		tree.insert(o15);
 		
 		
 		
@@ -66,6 +66,8 @@ public class JeffDriver {
 		
 		tree.writeRootToFile();
 		
+		
+//		System.out.println(tree.search(tree.getRoot(), 32).toString());
 		
 		System.out.println(tree.toString());
 		System.out.println("Optimal degree of " + tree.calculateDegree() +" found");

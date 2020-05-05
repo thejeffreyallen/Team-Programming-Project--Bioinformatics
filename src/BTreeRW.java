@@ -29,7 +29,7 @@ public class BTreeRW {
 		this.seqLength = seqLength;
 
 		try {
-			randFile = new RandomAccessFile(fileName, "rw");
+			randFile = new RandomAccessFile(fileName, "rwd");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
