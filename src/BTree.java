@@ -167,6 +167,23 @@ public class BTree {
 				c = rw.diskRead(x.getChildPointer(i), this.degree);
 				insertNotFull(c, k);
 			}
+			else
+			{
+				int j = c.keys.size() - 1;
+				while (j >= 0 && key <= c.getKey(j).getKey()) // find the correct position to insert k
+				{
+					if(key == c.getKey(j).getKey())
+					{
+						c.getKey(j).incrementDuplicates();
+						rw.diskWrite(c);
+						return;
+					}
+					j--;
+				}
+				j++;
+				c.keys.add(j, k);
+				rw.diskWrite(c);
+			}
 		}
 
 	}
@@ -187,25 +204,26 @@ public class BTree {
 		nodeCount++;
 		zRightNode.setParentPointer(y.getParentPointer());
 
-		for (int j = y.keys.size() - 1; j >= degree - 1; j--) {
+		for (int j = y.keys.size() - 1; j > degree - 1; j--) {
 			zRightNode.insertKey(0, y.keys.remove(j));
 		}
 		// checking if y is a leaf
 		if (y.isLeaf() != true) {
-			for (int j = 0; j < degree; j++) {
-				zRightNode.childPointers.add(y.childPointers.remove(j + 1));
+			for (int j = y.childPointers.size() - 1; j > degree - 1; j--) {
+				zRightNode.childPointers.add(0 , y.childPointers.get(j));
 			}
 
 		}
-		for (int j = x.keys.size(); j > index; j--) {
-			x.childPointers.set(j + 1, x.childPointers.remove(j));
+		for (int j = x.childPointers.size() - 1; j > index; j--) {
+			x.childPointers.add(j + 1, x.childPointers.remove(j));
 		}
+		
 		x.childPointers.add(index + 1, zRightNode.getIndex());
-		System.out.println("Working");
-		for (int j = x.keys.size(); j > index; j--) {
-			x.keys.set(j + 1, x.keys.remove(j));
+
+		for (int j = x.keys.size() - 1; j > index; j--) {
+			x.keys.add(j + 1, x.keys.remove(j));
 		}
-		x.insertKey(index, y.keys.remove(degree - 2));
+		x.insertKey(index, y.keys.remove(degree - 1));
 		// disk write for y
 		rw.diskWrite(y);
 		// disk write for zRightNode
