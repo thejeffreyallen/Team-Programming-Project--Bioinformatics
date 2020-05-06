@@ -25,7 +25,10 @@ public class GeneBankCreateBTree {
         try {
             int degree = Integer.parseInt(args[1]);
             if (degree < 0) badUsage();
-            else if (degree == 0) BTreeDegree = getOptimalDegree();
+            else if (degree == 0) { 
+            	BTreeDegree = getOptimalDegree();
+            	System.out.println("An optimal degree of "+BTreeDegree+" has been found.");
+            }
             else BTreeDegree = degree;
         } catch (NumberFormatException e) {
             badUsage();

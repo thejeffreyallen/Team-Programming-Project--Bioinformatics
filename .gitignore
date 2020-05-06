@@ -26,3 +26,8 @@ hs_err_pid*
 
 /test
 test - withTextAdded
+*.h
+*.c
+*.sh
+*.serial
+*.6
