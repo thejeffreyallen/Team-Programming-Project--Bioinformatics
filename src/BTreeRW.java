@@ -65,7 +65,11 @@ public class BTreeRW {
 	 * @param n the BTreeNode to write to a disk
 	 */
 	public void diskWrite(BTreeNode n) {
+
 		if (n != null) {
+			if(cacheSize>0){
+				cache.addObject(n);
+			}
 			try {
 				if (n.isRoot())
 					randFile.seek(12);
@@ -123,7 +127,15 @@ public class BTreeRW {
 	 * @return
 	 */
 	public BTreeNode diskRead(int index, int degree) {
-		BTreeNode newNode = new BTreeNode(index, degree, false, false);
+		BTreeNode newNode;
+
+		if(cacheSize>0){
+			newNode = readNode(index);
+			if(newNode != null){
+				return newNode;
+			}
+		}
+		newNode = new BTreeNode(index, degree, false, false);
 
 		try {
 			if (index > 0) {
@@ -166,6 +178,9 @@ public class BTreeRW {
 //		System.out.println(newNode.toString());
 //		System.out.println("------");
 
+		if(cacheSize>0){
+			cache.addObject(newNode);
+		}
 		return newNode;
 	}
 
