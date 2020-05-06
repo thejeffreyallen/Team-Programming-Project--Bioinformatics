@@ -190,7 +190,6 @@ public class BTreeRW {
 					newNode.addChild(randFile.readInt());
 				} else {
 					randFile.seek(randFile.getFilePointer() + 4);
-//					randFile.readInt(); // read through empty slots
 				}
 			}
 
@@ -201,8 +200,6 @@ public class BTreeRW {
 					newNode.keys.get(j).setDuplicates(randFile.readInt());
 				} else {
 					randFile.seek(randFile.getFilePointer() + 12);
-//					randFile.readLong(); // read through empty slots
-//					randFile.readInt(); // read through empty slots
 				}
 			}
 
@@ -228,6 +225,19 @@ public class BTreeRW {
 
 	public int getOffset(int index, int degree) {
 		return 12 + nodeSizeOnDisk(degree) + (index - 1) * nodeSizeOnDisk(degree);
+	}
+
+	public BTreeNode readNode(int index){
+		for(int i =0; i<cache.getSize(); i++){
+			BTreeNode n = cache.getAtIndex(index);
+			if(n.getIndex()== index){
+				cache.removeObject(n);
+				cache.addObject(n);
+				return n;
+			}
+			
+		}
+		return null;
 	}
 
 	private int parent(int i) {

@@ -34,6 +34,11 @@ public class Cache<T> {
 		addObject(temp);
 		return temp;
 	}
+	
+	public T getAtIndex(int index){
+		T retval = cache.get(index);
+		return retval;
+	}
 
 	
 
