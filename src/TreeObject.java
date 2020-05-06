@@ -16,11 +16,11 @@ public class TreeObject {
 	 * Constructor
 	 * @param data the long that the object contains
 	 * @param seqLength the length of the genome sequence
-	 * initializes duplicates to 0
+	 * initializes duplicates to 1
 	 */
 	public TreeObject(long data, int seqLength) {
 		this.data = data;
-		this.duplicates = 0;
+		this.duplicates = 1;
 		this.seqLength= seqLength;
 		
 	}
@@ -28,11 +28,11 @@ public class TreeObject {
 	/**
 	 * Constructor
 	 * @param data the long that the object contains
-	 * initializes duplicates to 0
+	 * initializes duplicates to 1
 	 */
 	public TreeObject(long data) {
 		this.data = data;
-		this.duplicates = 0;
+		this.duplicates = 1;
 
 	}
 
