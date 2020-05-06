@@ -16,7 +16,6 @@ public class BTree {
 	private String fileName;
 	private BTreeRW rw;
 	private ArrayList<Integer> nodeIndexes;
-	// TODO - Add unimplemented variables
 
 	/**
 	 * BTree constructor - initializes a new BTree object for writing to file
@@ -37,8 +36,6 @@ public class BTree {
 	 * 
 	 */
 	public BTree(int degree, String fileName, int seqLength, int cacheSize, int debugLevel) {
-		// root = new BTreeNode(nodeCount++, degree, true, true); // index = 0, degree,
-		// isRoot, isLeaf
 		nodeCount = -1;
 		File file = new File(fileName);
 		this.degree = degree;
@@ -51,8 +48,6 @@ public class BTree {
 		nodeCount++;
 		this.height = 0;
 		nodeIndexes = new ArrayList<Integer>();
-		// rw.writeMetaData(degree, root, seqLength);
-		// TODO - Add unimplemented code
 	}
 
 	/**
@@ -72,13 +67,12 @@ public class BTree {
 	 *                    (corresponding to the key stored) and frequency in an in
 	 *                    order traversal.
 	 */
-	public BTree(File bTreeOnDisk, int degree, int seqLength, int cacheSize, int debugLevel) {
-		this.degree = degree;
+	public BTree(File bTreeOnDisk, int cacheSize, int debugLevel) {
 		this.fileName = bTreeOnDisk.getName();
-		this.seqLength = seqLength;
 		this.cacheSize = cacheSize;
 		this.debugLevel = debugLevel;
-		rw = new BTreeRW(fileName, cacheSize, seqLength);
+		rw = new BTreeRW(debugLevel, fileName, cacheSize);
+		this.root = rw.diskRead(0, 0);
 		// TODO - Add unimplemented code
 
 	}
@@ -86,6 +80,11 @@ public class BTree {
 	public void writeRootToFile()
 	{
 		rw.writeMetaData(this);
+	}
+	
+	public void setRoot(BTreeNode n)
+	{
+		this.root = n;
 	}
 
 	/**
@@ -175,10 +174,6 @@ public class BTree {
 
 	}
 
-// todo
-//	private int allocateNode(){
-//	}
-
 	/**
 	 * THIS METHOD IS A MODIFIED METHOD BY JEFF
 	 * 
@@ -227,10 +222,18 @@ public class BTree {
 
 	}
 	
+	/** Basic 
+	 * 
+	 * @param n - Node to start search from
+	 * @param k - Key value to search for
+	 * @return - Node containing key value, null if not found
+	 */
 	public BTreeNode search(BTreeNode n, long k)
 	{
 		int i = 0;
 		long val = 0;
+		
+		// Loop through the keys in the node until the end is reached or key found is 
 		while(i < n.keys.size() && k > n.keys.get(i).getKey())
 		{
 			
@@ -250,71 +253,11 @@ public class BTree {
 		
 		return rw.diskRead(n.getChildPointer(i), degree);
 	}
-
-//	/**
-//	 * @param x - BTreeNode (parent)
-//	 * @param y - BTreeNode to split (child)
-//	 */
-//	public void splitChild(BTreeNode x, int index, BTreeNode y) {
-//		// allocate the new B-Tree
-//		BTreeNode zRightNode = new BTreeNode(nodeCount++, degree, false, false); // Allocate new node
-//
-//		// need to pulls full child
-//		zRightNode.setIsLeaf(y.isLeaf());
-//
-//		x.setParentPointer(y.getParentPointer());
-//
-//		// add y's node's second half to zRightNode node and reindex
-//		for (int j = y.keys.size() - 1; j >= degree; j--) {
-//			// add y's node's second half to zRightNode node and reindex
-//			zRightNode.keys.add(0, y.getKey(j));
-//			// update number of keys for zRightNode and y - Array List updates
-//		}
-//		// checking if y is a leaf
-//		if (y.isLeaf() != true) {
-//
-//			// reindexing y's children to zRightNode's children
-//			for (int j = 1; j <= degree; j++) {
-//				x.setChildPointer(j, x.getChildPointer(j + degree));
-//			}
-//		}
-//		// move the x node child pointers to add the zRight node
-//		for (int j = 0; j < index; j++) {
-//			x.childPointers.set(j, x.getChildPointer(j + 1));
-//		}
-//		// add zRightNode as a child for parent node
-//		x.childPointers.add(index + 1, zRightNode.getOffset());
-//
-//		// create a spot for middle object to go up
-//		for (int j = x.getKeyCount() - 1; j >= index; j--) {
-//			x.setKey(j, x.getKey(j));
-//		}
-//
-////		// moving middle objects from y node to x node
-////		x.setKey(index, y.getKey(degree));
-////		x.setKeyCount(x.getKeyCount() + 1);
-//
-//		for (int j = y.getKeyCount() - 1; j > degree; j--) {
-//			y.removekey(j);
-//		}
-//
-//		if (!y.isLeaf()) {
-//			for (int j = y.getNumChildPtrs(); j > degree; j--) {
-//				y.removeChild(j);
-//			}
-//		}
-//		y.removekey(degree);
-//		// update obj counts
-//		x.setIsLeaf(false);
-//
-//		// disk write for y
-//		rw.diskWrite(y);
-//		// disk write for zRightNode
-//		rw.diskWrite(zRightNode);
-//		// disk write for x
-//		rw.diskWrite(x);
-//
-//	}
+	
+	public int getDegree()
+	{
+		return this.degree;
+	}
 
 	/**
 	 * 
@@ -366,7 +309,7 @@ public class BTree {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		BTreeNode start = root;
+		BTreeNode start = rw.diskRead(0, degree);
 		sb.append("______\n\n").append(start.toString()).append("______\n"+"ROOT\n");
 		for(Integer i : nodeIndexes)
 		{
@@ -376,27 +319,27 @@ public class BTree {
 		return sb.toString();
 	}
 
-	/**
-	 * 
-	 * 
-	 * @param t - BTree Node to print
-	 * @return
-	 */
-	public String printTree(BTreeNode t) {
-		if(t == null)
-			throw new IllegalStateException();
-		StringBuilder sb = new StringBuilder();
-		BTreeNode next = null;
-		if(t.isRoot())
-			sb.append("______\n\n").append(t.toString()).append("______\n"+"ROOT\n");
-		else
-			sb.append("______\n\n").append(t.toString()).append("______\n"+"Node: "+t.getIndex()+"\n");
-		for (int i = 0; i < t.childPointers.size(); i++) {
-			next = rw.diskRead(t.childPointers.get(i), degree);
-			if (next.isLeaf()) {
-				sb.append(printTree(next));
-			}
-		}
-		return sb.toString();
-	}
+//	/**
+//	 * 
+//	 * 
+//	 * @param t - BTree Node to print
+//	 * @return
+//	 */
+//	public String printTree(BTreeNode t) {
+//		if(t == null)
+//			throw new IllegalStateException();
+//		StringBuilder sb = new StringBuilder();
+//		BTreeNode next = null;
+//		if(t.isRoot())
+//			sb.append("______\n\n").append(t.toString()).append("______\n"+"ROOT\n");
+//		else
+//			sb.append("______\n\n").append(t.toString()).append("______\n"+"Node: "+t.getIndex()+"\n");
+//		for (int i = 0; i < t.childPointers.size(); i++) {
+//			next = rw.diskRead(t.childPointers.get(i), degree);
+//			if (next.isLeaf()) {
+//				sb.append(printTree(next));
+//			}
+//		}
+//		return sb.toString();
+//	}
 }
