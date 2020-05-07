@@ -1,6 +1,5 @@
 
 import java.io.*;
-import java.nio.ByteBuffer;
 
 /**
  * 
@@ -38,6 +37,13 @@ public class BTreeRW {
 		cache = new Cache<BTreeNode>(cacheSize);
 	}
 
+	/**
+	 * Secondary constructor to use when reading in a BTree from file
+	 * 
+	 * @param fileName - name of file to read tree from
+	 * @param cacheSize - size of cache to use
+	 * @param tree - tree to setup using data read from file
+	 */
 	public BTreeRW(String fileName, int cacheSize, BTree tree) {
 		this.fileName = fileName;
 		this.cacheSize = cacheSize;
@@ -75,6 +81,10 @@ public class BTreeRW {
 
 	}
 
+	/** Read a BTree's metaData from file
+	 * 
+	 * @param tree - BTree to create from reading file
+	 */
 	public void readMetaData(BTree tree) {
 		try {
 			randFile.seek(0); // Start at beginning of file

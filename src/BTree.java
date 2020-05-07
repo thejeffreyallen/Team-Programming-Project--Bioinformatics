@@ -56,11 +56,8 @@ public class BTree {
 	/**
 	 * Secondary constructor - Read and construct a BTree from file
 	 * 
-	 * @param            //BTreeFile - file from which to read the tree from
-	 * @param degree     - degree of the BTree. If value is 0, calculate optimal
-	 *                   degree
-	 * @param seqLength  - how many characters to include when reading. i.e. 3 ---
-	 *                   [ATC]
+	 * @param            //file - file from which to read the tree from
+
 	 * @param cacheSize  - size of the cache. The bigger the cache, the faster the
 	 *                   program will run.
 	 * @param debugLevel - default value is 0. if debug level is 0 Any diagnostic
@@ -75,8 +72,6 @@ public class BTree {
 		this.cacheSize = cacheSize;
 		this.debugLevel = debugLevel;
 		rw = new BTreeRW(fileName, cacheSize, this);
-		// TODO - Add unimplemented code
-
 	}
 
 	public void writeRootToFile() {
