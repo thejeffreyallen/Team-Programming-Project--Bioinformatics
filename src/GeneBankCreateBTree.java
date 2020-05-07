@@ -85,7 +85,7 @@ public class GeneBankCreateBTree {
         BufferedReader bReader = null;
         try {
             //RandomAccessFile randomAccess = new RandomAccessFile(file, "rw");
-            tree = new BTree(BTreeDegree, "test", subSeqLen, 0, debugLevel);
+            tree = new BTree(BTreeDegree, "xyz.gbk.btree.data."+subSeqLen+"."+BTreeDegree, subSeqLen, 0, debugLevel);
             bReader = new BufferedReader(new FileReader(file));
             boolean sequenceFound = false;
             String line = null;
