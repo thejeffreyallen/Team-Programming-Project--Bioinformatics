@@ -58,6 +58,7 @@ public class GeneBankSearch {
         int count =0;  
         int sequenceCount = 0;
         int degreeCount=0;
+        try{
        while(count<sequenceScan.length()) {
            if(sequenceCount==3 && sequenceLength == 0) {
                int i = count;
@@ -86,6 +87,10 @@ public class GeneBankSearch {
            count++;
            
        }
+    } catch(NumberFormatException e){
+        System.out.println("Make sure file is in this format: xyz.gbk.btree.data.k.t.");
+        System.out.println("Where sequence length is k and BTree Degree is t");
+    }
 
         BTree b = new BTree(degree, args[2], sequenceLength, cache.getSize(), 0);
         GenBankSwitch genSwitch = new GenBankSwitch();
