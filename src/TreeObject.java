@@ -94,6 +94,6 @@ public class TreeObject {
 		s += convert.switchLongToString(this.data, this.seqLength);
 	
 
-		return s + " " + getDuplicates();
+		return s + ": " + getDuplicates();
 	}
 }
