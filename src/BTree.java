@@ -1,7 +1,10 @@
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Stack;
 
 /**
  * BTree class for creating and managing a BTree
@@ -53,19 +56,19 @@ public class BTree {
 	/**
 	 * Secondary constructor - Read and construct a BTree from file
 	 * 
-	 * @param //BTreeFile - file from which to read the tree from
-	 * @param degree      - degree of the BTree. If value is 0, calculate optimal
-	 *                    degree
-	 * @param seqLength   - how many characters to include when reading. i.e. 3 ---
-	 *                    [ATC]
-	 * @param cacheSize   - size of the cache. The bigger the cache, the faster the
-	 *                    program will run.
-	 * @param debugLevel  - default value is 0. if debug level is 0 Any diagnostic
-	 *                    messages, help and status messages must be be printed on
-	 *                    standard error stream. If it is 1 the program writes a
-	 *                    text file named dump. The dump file contains DNA string
-	 *                    (corresponding to the key stored) and frequency in an in
-	 *                    order traversal.
+	 * @param            //BTreeFile - file from which to read the tree from
+	 * @param degree     - degree of the BTree. If value is 0, calculate optimal
+	 *                   degree
+	 * @param seqLength  - how many characters to include when reading. i.e. 3 ---
+	 *                   [ATC]
+	 * @param cacheSize  - size of the cache. The bigger the cache, the faster the
+	 *                   program will run.
+	 * @param debugLevel - default value is 0. if debug level is 0 Any diagnostic
+	 *                   messages, help and status messages must be be printed on
+	 *                   standard error stream. If it is 1 the program writes a text
+	 *                   file named dump. The dump file contains DNA string
+	 *                   (corresponding to the key stored) and frequency in an in
+	 *                   order traversal.
 	 */
 	public BTree(File bTreeOnDisk, int cacheSize, int debugLevel) {
 		this.fileName = bTreeOnDisk.getName();
@@ -76,14 +79,12 @@ public class BTree {
 		// TODO - Add unimplemented code
 
 	}
-	
-	public void writeRootToFile()
-	{
+
+	public void writeRootToFile() {
 		rw.writeMetaData(this);
 	}
-	
-	public void setRoot(BTreeNode n)
-	{
+
+	public void setRoot(BTreeNode n) {
 		this.root = n;
 	}
 
@@ -99,7 +100,7 @@ public class BTree {
 			nodeCount++;
 			root = s; // make s the new root
 			s.setIsLeaf(false);
-			
+
 			// s.childNodes.add(r);
 			r.setParentPointer(s.getIndex());
 			r.setIsRoot(false);
@@ -128,8 +129,7 @@ public class BTree {
 		if (x.isLeaf()) {
 			while (i >= 0 && key <= x.getKey(i).getKey()) // find the correct position to insert k
 			{
-				if(key == x.getKey(i).getKey())
-				{
+				if (key == x.getKey(i).getKey()) {
 					x.getKey(i).incrementDuplicates();
 					rw.diskWrite(x);
 					return;
@@ -141,8 +141,7 @@ public class BTree {
 
 		} else {
 			while (i >= 0 && key <= x.getKey(i).getKey()) { // find the correct position to insert k
-				if(key == x.getKey(i).getKey())
-				{
+				if (key == x.getKey(i).getKey()) {
 					x.getKey(i).incrementDuplicates();
 					rw.diskWrite(x);
 					return;
@@ -151,10 +150,8 @@ public class BTree {
 			}
 			i++; // line 11 - in class b-tree pseudo-code
 			BTreeNode c = rw.diskRead(x.getChildPointer(i), this.degree); // read child node from disk at offset i
-			for(int j = 0; j < c.keys.size(); j++)
-			{
-				if(key == c.getKey(j).getKey())
-				{
+			for (int j = 0; j < c.keys.size(); j++) {
+				if (key == c.getKey(j).getKey()) {
 					c.getKey(j).incrementDuplicates();
 					rw.diskWrite(c);
 					return;
@@ -163,11 +160,11 @@ public class BTree {
 			if (c.isFull()) { // if node is full
 				splitChild(x, i, c); // split node
 				if (key > x.keys.get(i).getKey()) {
-					
+
 					i++;
 				}
 				c = rw.diskRead(x.getChildPointer(i), this.degree);
-				
+
 			}
 			insertNotFull(c, k);
 		}
@@ -190,20 +187,18 @@ public class BTree {
 			zRightNode.insertKey(j, y.keys.get(j + degree)); // add last half of y's keys to zRightNode
 			count++;
 		}
-		while(count > 0)
-		{
+		while (count > 0) {
 			y.keys.remove(y.keys.size() - 1); // remove last half of y's keys
 			count--;
 		}
 		// checking if y is a leaf
 		if (y.isLeaf() != true) {
-			count = 0; //make sure count is reset for child pointers
+			count = 0; // make sure count is reset for child pointers
 			for (int j = 0; j < degree; j++) {
-				zRightNode.childPointers.add(j , y.childPointers.get(j + degree)); // add y's child pointers
+				zRightNode.childPointers.add(j, y.childPointers.get(j + degree)); // add y's child pointers
 				count++;
 			}
-			while(count > 0)
-			{
+			while (count > 0) {
 				y.childPointers.remove(y.childPointers.size() - 1); // remove last half of y's child pointers
 				count--;
 			}
@@ -221,41 +216,37 @@ public class BTree {
 		rw.diskWrite(x);
 
 	}
-	
-	/** Basic 
+
+	/**
+	 * Basic
 	 * 
 	 * @param n - Node to start search from
 	 * @param k - Key value to search for
 	 * @return - Node containing key value, null if not found
 	 */
-	public BTreeNode search(BTreeNode n, long k)
-	{
+	public BTreeNode search(BTreeNode n, long k) {
 		int i = 0;
 		long val = 0;
-		
-		// Loop through the keys in the node until the end is reached or key found is 
-		while(i < n.keys.size() && k > n.keys.get(i).getKey())
-		{
-			
+
+		// Loop through the keys in the node until the end is reached or key found is
+		while (i < n.keys.size() && k > n.keys.get(i).getKey()) {
+
 			i++;
 			val = n.keys.get(i).getKey();
 		}
-		
-		if(k == val) 
-		{
+
+		if (k == val) {
 			return n;
 		}
-		
-		if(n.isLeaf())
-		{
+
+		if (n.isLeaf()) {
 			return null;
 		}
-		
+
 		return rw.diskRead(n.getChildPointer(i), degree);
 	}
-	
-	public int getDegree()
-	{
+
+	public int getDegree() {
 		return this.degree;
 	}
 
@@ -310,36 +301,64 @@ public class BTree {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		BTreeNode start = rw.diskRead(0, degree);
-		sb.append("______\n\n").append(start.toString()).append("______\n"+"ROOT\n");
-		for(Integer i : nodeIndexes)
-		{
+		sb.append("______\n\n").append(start.toString()).append("______\n" + "ROOT\n");
+		for (Integer i : nodeIndexes) {
 			start = rw.diskRead(i, degree);
-			sb.append("______\n\n").append(start.toString()).append("______\n"+"Node: "+start.getIndex()+"\n");
+			sb.append("______\n\n").append(start.toString()).append("______\n" + "Node: " + start.getIndex() + "\n");
 		}
 		return sb.toString();
 	}
 
-//	/**
-//	 * 
-//	 * 
-//	 * @param t - BTree Node to print
-//	 * @return
-//	 */
-//	public String printTree(BTreeNode t) {
-//		if(t == null)
-//			throw new IllegalStateException();
-//		StringBuilder sb = new StringBuilder();
-//		BTreeNode next = null;
-//		if(t.isRoot())
-//			sb.append("______\n\n").append(t.toString()).append("______\n"+"ROOT\n");
-//		else
-//			sb.append("______\n\n").append(t.toString()).append("______\n"+"Node: "+t.getIndex()+"\n");
-//		for (int i = 0; i < t.childPointers.size(); i++) {
-//			next = rw.diskRead(t.childPointers.get(i), degree);
-//			if (next.isLeaf()) {
-//				sb.append(printTree(next));
-//			}
-//		}
-//		return sb.toString();
-//	}
+	/**
+	 * writes a text file named dump, that has the following line format: DNA
+	 * string: frequency.
+	 * 
+	 * @throws IOException
+	 */
+	public void writeTreeDump() throws IOException {
+		BTreeNode temp = root; // Temporary node to iterate with
+		Stack<Integer> childPointers = new Stack<>(); // stack to hold childPointers
+		Stack<Integer> indexes = new Stack<>(); // stack to hold key indexes
+		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("dump"), "UTF-8");
+		BufferedWriter bufWriter = new BufferedWriter(writer);
+		int keyIndex = 0;
+		while (true) {
+			if (temp.isLeaf()) {
+				for (int i = 0; i < temp.keys.size(); i++) {
+					bufWriter.write(temp.keys.get(i).toString() + "\n"); // Write all keys of current node to file
+				}
+
+				if (temp.isRoot()) // If this is the case, the root is the only node in the tree
+					break; // done, break out of the loop.
+				temp = this.rw.diskRead(childPointers.pop(), degree); // go to previous node in the tree
+				keyIndex = indexes.pop();
+				if (keyIndex < temp.keys.size()) {
+					bufWriter.write(temp.keys.get(keyIndex).toString() + "\n");
+				}
+				keyIndex++;
+			} else if (!temp.isLeaf() && keyIndex == temp.childPointers.size()) { // if node is an internal node and
+																					// there are no more child pointers
+																					// left
+				if (childPointers.isEmpty() && childPointers.isEmpty()) { // if both stacks are empty
+					break; // done, break out of the loop.
+				} else {
+					temp = this.rw.diskRead(childPointers.pop(), degree); // go to previous node in the tree
+					keyIndex = indexes.pop();
+
+					if (keyIndex < temp.keys.size()) {
+						bufWriter.write(temp.keys.get(keyIndex).toString() + "\n");
+					}
+					keyIndex++;
+				}
+			} else { // none of the previous if statements were true so push node and key index to stack
+				indexes.push(keyIndex);
+				childPointers.push(temp.getIndex());
+				temp = rw.diskRead(temp.childPointers.get(keyIndex), degree); // go to next node
+				keyIndex = 0; // reset key index
+			}
+
+		}
+		bufWriter.close();
+	}
+
 }
