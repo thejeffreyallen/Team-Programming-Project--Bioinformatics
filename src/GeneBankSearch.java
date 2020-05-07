@@ -12,7 +12,7 @@ public class GeneBankSearch {
     public static void main(String args[]) {
 
         if (args.length < 3 || args.length > 5) {
-            System.out.println("Java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]");
+           usageError();
         } else {
         boolean isCache;
         treeFile = new File(args[1]);
@@ -25,7 +25,7 @@ public class GeneBankSearch {
             isCache= true;
         } 
     } catch(NumberFormatException e){
-        System.out.println(printUsage());
+        usageError();
     }
 
         cache= null;
@@ -34,7 +34,7 @@ public class GeneBankSearch {
             cache = new Cache(Integer.parseInt(args[4]));
         }
     } catch(NumberFormatException e){
-        System.out.println(printUsage());
+        usageError();
     }
 
         
@@ -54,7 +54,7 @@ public class GeneBankSearch {
             treeScan.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            System.out.println(printUsage());
+            usageError();
         }
        
         degree=((sequenceLength+1)/2);
@@ -76,7 +76,7 @@ public class GeneBankSearch {
         queryScan.close();
     } catch(FileNotFoundException e){
         e.printStackTrace();
-        System.out.println(printUsage());
+        usageError();
     }
     }
     }
@@ -100,8 +100,9 @@ public class GeneBankSearch {
        
     }
 
-    private static String printUsage(){
+    private static void usageError(){
         String s =   "Java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]";
-        return s;
+        System.out.println(s);
+        System.exit(1);
     }
 }

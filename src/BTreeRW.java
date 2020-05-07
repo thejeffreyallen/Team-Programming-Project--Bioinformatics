@@ -100,7 +100,11 @@ public class BTreeRW {
 	 * @param n the BTreeNode to write to disk
 	 */
 	public void diskWrite(BTreeNode n) {
+
 		if (n != null) {
+			if(cacheSize>0){
+				cache.addObject(n);
+			}
 			try {
 				if (n.isRoot())
 					randFile.seek(12); // Offset for root is total size of tree meta data 4 * 4 * 4 = 12 bytes
@@ -155,7 +159,18 @@ public class BTreeRW {
 	 * @return
 	 */
 	public BTreeNode diskRead(int index, int degree) {
-		BTreeNode newNode = null;
+
+		BTreeNode newNode;
+
+		if(cacheSize>0){
+			newNode = readNode(index);
+			if(newNode != null){
+				return newNode;
+			}
+		}
+		newNode = new BTreeNode(index, degree, false, false);
+
+
 		try {
 			if (degree == 0) {
 				randFile.seek(0);
@@ -216,6 +231,9 @@ public class BTreeRW {
 //		System.out.println(newNode.toString());
 //		System.out.println("------");
 
+		if(cacheSize>0){
+			cache.addObject(newNode);
+		}
 		return newNode;
 	}
 
