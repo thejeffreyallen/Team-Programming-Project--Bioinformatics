@@ -214,10 +214,29 @@ public class BTree {
 	/**
 	 * Basic
 	 * 
-	 * @param n - Node to start search from
-	 * @param k - Key value to search for
+	 * @param root - Node to start search from
+	 * @param t - TreeObject to search for
 	 * @return - Node containing key value, null if not found
 	 */
+
+	public TreeObject search(BTreeNode root, TreeObject t){
+		int i =0;
+		while(i<root.getKeyCount() && (t.compareTo(root.getKey(i))>0)){
+			i++;
+		}
+			if(i<root.getKeyCount() && t.compareTo(root.getKey(i))==0){
+				return root.getKey(i);
+			}
+			if(root.isLeaf()){
+				return null;
+			} else{
+				BTreeNode child = rw.diskRead(root.getChildPointer(i), degree);
+				return search(child, t);
+			}
+			
+		
+	 }
+	 /*
 	public BTreeNode search(BTreeNode n, long k) {
 		int i = 0;
 		long val = 0;
@@ -239,7 +258,7 @@ public class BTree {
 
 		return rw.diskRead(n.getChildPointer(i), degree);
 	}
-
+*/
 	public int getDegree() {
 		return this.degree;
 	}
