@@ -1,11 +1,17 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 
 public class GeneBankSearch {
     private static int sequenceLength;
     private static Cache cache;
     private static int degree;
+    private static int cacheSize = 0;
     private static File treeFile;
     private static File query;
     private static boolean isCache;
@@ -33,6 +39,7 @@ public class GeneBankSearch {
         try{
         if(isCache && args[4]!=null){
             cache = new Cache(Integer.parseInt(args[3]));
+            cacheSize = cache.getSize();
         } else{
             usageError();
         }
@@ -51,48 +58,59 @@ public class GeneBankSearch {
             usageError();
         }
         
+        OutputStreamWriter writer = null;
+		try {
+			writer = new OutputStreamWriter(new FileOutputStream("queryOutput"), "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		BufferedWriter bufWriter = new BufferedWriter(writer);
 
         String sequenceScan = args[1];
-        sequenceLength = 0;
-        degree = 0;
-        int count =0;  
-        int sequenceCount = 0;
-        int degreeCount=0;
-        try{
-       while(count<sequenceScan.length()) {
-           if(sequenceCount==3 && sequenceLength == 0) {
-               int i = count;
-               String s ="";
-               while(sequenceScan.charAt(i)!='.') {
-                   s += sequenceScan.charAt(i);
-                   i++;
-               }
-               sequenceLength= Integer.parseInt(s);
-           }
-           
-           if(degreeCount==4 && degree == 0) {
-               int i = count;
-               String s = "";
-               while(sequenceScan.charAt(i)!='.') {
-                   s += sequenceScan.charAt(i);
-                   i++;
-               }
-               degree = Integer.parseInt(s);
-               
-           }
-           if(sequenceScan.charAt(count)=='.') {
-               sequenceCount++;
-               degreeCount++;
-           }
-           count++;
-           
-       }
-    } catch(NumberFormatException e){
-        System.out.println("Make sure file is in this format: xyz.gbk.btree.data.k.t.");
-        System.out.println("Where sequence length is k and BTree Degree is t");
-    }
+        sequenceLength = treeFile.getName().charAt(19);
+        degree = treeFile.getName().charAt(20);;
+//        int count =0;  
+//        int sequenceCount = 0;
+//        int degreeCount=0;
+//        try{
+//       while(count<sequenceScan.length()) {
+//           if(sequenceCount==3 && sequenceLength == 0) {
+//               int i = count;
+//               String s ="";
+//               while(sequenceScan.charAt(i)!='.') {
+//                   s += sequenceScan.charAt(i);
+//                   i++;
+//               }
+//               sequenceLength= Integer.parseInt(s);
+//           }
+//           
+//           if(degreeCount==4 && degree == 0) {
+//               int i = count;
+//               String s = "";
+//               while(sequenceScan.charAt(i)!='.') {
+//                   s += sequenceScan.charAt(i);
+//                   i++;
+//               }
+//               degree = Integer.parseInt(s);
+//               
+//           }
+//           if(sequenceScan.charAt(count)=='.') {
+//               sequenceCount++;
+//               degreeCount++;
+//           }
+//           count++;
+//           
+//       }
+//    } catch(NumberFormatException e){
+//        System.out.println("Make sure file is in this format: xyz.gbk.btree.data.k.t.");
+//        System.out.println("Where sequence length is k and BTree Degree is t");
+//    }
 
-        BTree b = new BTree(degree, args[2], sequenceLength, cache.getSize(), 0);
+        BTree b = new BTree(treeFile, cacheSize, 0);
         GenBankSwitch genSwitch = new GenBankSwitch();
     try{
         Scanner queryScan = new Scanner(query);
@@ -104,6 +122,7 @@ public class GeneBankSearch {
             if(result!=null){
                 if(isDebug){
                 System.out.println(result.toString());
+                bufWriter.write(result.toString()+"\n");
                 }
             }
 
@@ -112,7 +131,10 @@ public class GeneBankSearch {
     } catch(FileNotFoundException e){
         e.printStackTrace();
         usageError();
-    }
+    } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
     }
     }
     /*
