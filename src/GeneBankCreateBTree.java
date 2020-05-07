@@ -85,7 +85,7 @@ public class GeneBankCreateBTree {
         BufferedReader bReader = null;
         try {
             //RandomAccessFile randomAccess = new RandomAccessFile(file, "rw");
-            tree = new BTree(BTreeDegree, "test", subSeqLen, 0, debugLevel);
+            tree = new BTree(BTreeDegree, "xyz.gbk.btree.data."+subSeqLen+"."+BTreeDegree, subSeqLen, 0, debugLevel);
             bReader = new BufferedReader(new FileReader(file));
             boolean sequenceFound = false;
             String line = null;
@@ -160,7 +160,9 @@ public class GeneBankCreateBTree {
                 System.err.println("ERROR:: Failed to close file '" + file + "'.\n");
 
             }
+            tree.writeRootToFile();
             System.out.println(tree.toString());
+            
             try {
 				tree.writeTreeDump();
 			} catch (IOException e) {

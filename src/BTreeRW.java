@@ -1,6 +1,5 @@
 
 import java.io.*;
-import java.nio.ByteBuffer;
 
 /**
  * 
@@ -38,10 +37,16 @@ public class BTreeRW {
 		cache = new Cache<BTreeNode>(cacheSize);
 	}
 
-	public BTreeRW(int debugLevel, String fileName, int cacheSize) {
+	/**
+	 * Secondary constructor to use when reading in a BTree from file
+	 * 
+	 * @param fileName - name of file to read tree from
+	 * @param cacheSize - size of cache to use
+	 * @param tree - tree to setup using data read from file
+	 */
+	public BTreeRW(String fileName, int cacheSize, BTree tree) {
 		this.fileName = fileName;
 		this.cacheSize = cacheSize;
-		this.debugLevel = debugLevel;
 		try {
 			randFile = new RandomAccessFile(fileName, "rwd");
 		} catch (FileNotFoundException e) {
@@ -49,6 +54,7 @@ public class BTreeRW {
 			e.printStackTrace();
 		}
 		cache = new Cache<BTreeNode>(cacheSize);
+		readMetaData(tree);
 	}
 
 	/**
@@ -75,23 +81,27 @@ public class BTreeRW {
 
 	}
 
-	public BTree readMetaData() {
-		BTree newTree = null;
+	/** Read a BTree's metaData from file
+	 * 
+	 * @param tree - BTree to create from reading file
+	 */
+	public void readMetaData(BTree tree) {
 		try {
-
 			randFile.seek(0); // Start at beginning of file
-
 			// Read B-tree meta data
-			int degree = randFile.readInt();
+			int foundDegree = randFile.readInt();
 			this.seqLength = randFile.readInt();
 			int height = randFile.readInt();
-
-			newTree = new BTree(degree, this.fileName, this.seqLength, this.cacheSize, this.debugLevel);
+			
+			tree.setDegree(foundDegree);
+			tree.setHeight(height);
+			tree.setSeqLength(seqLength);
+			tree.setRoot(diskRead(0, foundDegree));
+			
 		} catch (IOException e) {
 			System.err.println("An error occured when attempting to read BTree meta data");
 			e.printStackTrace();
 		}
-		return newTree;
 	}
 
 	/**
@@ -102,9 +112,11 @@ public class BTreeRW {
 	public void diskWrite(BTreeNode n) {
 
 		if (n != null) {
+
 			if(cacheSize>0){
 				cache.addObject(n);
 			}
+
 			try {
 				if (n.isRoot())
 					randFile.seek(12); // Offset for root is total size of tree meta data 4 * 4 * 4 = 12 bytes
@@ -169,7 +181,6 @@ public class BTreeRW {
 			}
 		}
 		newNode = new BTreeNode(index, degree, false, false);
-
 
 		try {
 			if (degree == 0) {
@@ -245,15 +256,15 @@ public class BTreeRW {
 		return 12 + nodeSizeOnDisk(degree) + (index - 1) * nodeSizeOnDisk(degree);
 	}
 
-	public BTreeNode readNode(int index){
-		for(int i =0; i<cache.getSize(); i++){
+	public BTreeNode readNode(int index) {
+		for (int i = 0; i < cache.getSize(); i++) {
 			BTreeNode n = cache.getAtIndex(index);
-			if(n.getIndex()== index){
+			if (n.getIndex() == index) {
 				cache.removeObject(n);
 				cache.addObject(n);
 				return n;
 			}
-			
+
 		}
 		return null;
 	}
@@ -270,4 +281,5 @@ public class BTreeRW {
 	private int right(int i) {
 		return (2 * i) + 1;
 	}
+
 }

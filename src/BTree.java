@@ -56,11 +56,8 @@ public class BTree {
 	/**
 	 * Secondary constructor - Read and construct a BTree from file
 	 * 
-	 * @param            //BTreeFile - file from which to read the tree from
-	 * @param degree     - degree of the BTree. If value is 0, calculate optimal
-	 *                   degree
-	 * @param seqLength  - how many characters to include when reading. i.e. 3 ---
-	 *                   [ATC]
+	 * @param            //file - file from which to read the tree from
+
 	 * @param cacheSize  - size of the cache. The bigger the cache, the faster the
 	 *                   program will run.
 	 * @param debugLevel - default value is 0. if debug level is 0 Any diagnostic
@@ -70,14 +67,11 @@ public class BTree {
 	 *                   (corresponding to the key stored) and frequency in an in
 	 *                   order traversal.
 	 */
-	public BTree(File bTreeOnDisk, int cacheSize, int debugLevel) {
-		this.fileName = bTreeOnDisk.getName();
+	public BTree(File file, int cacheSize, int debugLevel) {
+		this.fileName = file.getName();
 		this.cacheSize = cacheSize;
 		this.debugLevel = debugLevel;
-		rw = new BTreeRW(debugLevel, fileName, cacheSize);
-		this.root = rw.diskRead(0, 0);
-		// TODO - Add unimplemented code
-
+		rw = new BTreeRW(fileName, cacheSize, this);
 	}
 
 	public void writeRootToFile() {
@@ -268,6 +262,16 @@ public class BTree {
 	public int getDegree() {
 		return this.degree;
 	}
+	
+	public void setDegree(int degree)
+	{
+		this.degree = degree;
+	}
+	
+	public void setSeqLength(int seq)
+	{
+		this.seqLength = seq;
+	}
 
 	/**
 	 * 
@@ -275,6 +279,11 @@ public class BTree {
 	 */
 	public int getHeight() {
 		return this.height;
+	}
+	
+	public void setHeight(int height)
+	{
+		this.height = height;
 	}
 
 	/**
