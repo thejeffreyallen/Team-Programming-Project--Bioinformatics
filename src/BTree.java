@@ -70,12 +70,11 @@ public class BTree {
 	 *                   (corresponding to the key stored) and frequency in an in
 	 *                   order traversal.
 	 */
-	public BTree(File bTreeOnDisk, int cacheSize, int debugLevel) {
-		this.fileName = bTreeOnDisk.getName();
+	public BTree(File file, int cacheSize, int debugLevel) {
+		this.fileName = file.getName();
 		this.cacheSize = cacheSize;
 		this.debugLevel = debugLevel;
-		rw = new BTreeRW(debugLevel, fileName, cacheSize);
-		this.root = rw.diskRead(0, 0);
+		rw = new BTreeRW(fileName, cacheSize, this);
 		// TODO - Add unimplemented code
 
 	}
@@ -249,6 +248,16 @@ public class BTree {
 	public int getDegree() {
 		return this.degree;
 	}
+	
+	public void setDegree(int degree)
+	{
+		this.degree = degree;
+	}
+	
+	public void setSeqLength(int seq)
+	{
+		this.seqLength = seq;
+	}
 
 	/**
 	 * 
@@ -256,6 +265,11 @@ public class BTree {
 	 */
 	public int getHeight() {
 		return this.height;
+	}
+	
+	public void setHeight(int height)
+	{
+		this.height = height;
 	}
 
 	/**

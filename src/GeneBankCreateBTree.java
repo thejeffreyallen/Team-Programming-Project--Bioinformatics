@@ -160,7 +160,9 @@ public class GeneBankCreateBTree {
                 System.err.println("ERROR:: Failed to close file '" + file + "'.\n");
 
             }
+            tree.writeRootToFile();
             System.out.println(tree.toString());
+            
             try {
 				tree.writeTreeDump();
 			} catch (IOException e) {
