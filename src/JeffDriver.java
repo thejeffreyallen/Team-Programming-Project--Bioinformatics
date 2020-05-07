@@ -62,5 +62,6 @@ public class JeffDriver {
 		
 		System.out.println(tree.toString());
 		System.out.println("Optimal degree of " + tree.calculateDegree() +" found");
+		tree.writeTreeDump();
 	}
 }

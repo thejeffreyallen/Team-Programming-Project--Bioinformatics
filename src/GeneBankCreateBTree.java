@@ -161,7 +161,12 @@ public class GeneBankCreateBTree {
 
             }
             System.out.println(tree.toString());
-
+            try {
+				tree.writeTreeDump();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
 
     }
