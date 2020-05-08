@@ -36,6 +36,10 @@ public class GeneBankCreateBTree {
 
         try {
             int degree = Integer.parseInt(args[1]);
+            if(degree == 1){
+                System.out.println("Degree cannot be 1");
+                badUsage();
+            }
             if (degree < 0) badUsage();
             else if (degree == 0) {
             	BTreeDegree = getOptimalDegree();
