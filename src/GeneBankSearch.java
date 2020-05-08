@@ -34,7 +34,7 @@ public class GeneBankSearch {
 			cache = null;
 			if (isCache) {
 				try {
-					if (isCache && args[4] != null) {
+					if (isCache && args[3] != null) {
 						cache = new Cache(Integer.parseInt(args[3]));
 						cacheSize = cache.getSize();
 					} else {
@@ -48,8 +48,10 @@ public class GeneBankSearch {
 			{
 				if(!isCache && Integer.parseInt(args[3]) != 0)
 				{
+					if(args[3]!=null){
 					System.err.println("Cache size argument is invalid due to arg[0] = 0\n");
 					usageError();
+					}
 				}
 			}
 			isDebug = false;
