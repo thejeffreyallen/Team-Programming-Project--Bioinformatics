@@ -134,9 +134,9 @@ public class GeneBankCreateBTree {
                               long numb = key.switchStringToLong(dnaSubStr.toString());
                               tree.insert(new TreeObject(numb, subSeqLen));
 
-                            System.out.printf("[%s]%n", dnaSubStr.toString());
-                            System.out.printf("Binary : %s%n", dnaSubBinary.toString());
-                            System.out.printf("Key: %s%n", key.switchStringToLong(dnaSubStr.toString()));
+                           // System.out.printf("[%s]%n", dnaSubStr.toString());
+                           // System.out.printf("Binary : %s%n", dnaSubBinary.toString());
+                           // System.out.printf("Key: %s%n", key.switchStringToLong(dnaSubStr.toString()));
                             dnaSubStr.deleteCharAt(0);
                             dnaSubBinary.delete(0, 2);
                         }
