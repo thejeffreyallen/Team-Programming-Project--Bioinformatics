@@ -257,6 +257,11 @@ public class BTreeRW {
 		return 12 + nodeSizeOnDisk(degree) + (index - 1) * nodeSizeOnDisk(degree);
 	}
 
+	/**
+	 * Method to read node from cache
+	 * 
+	 * @param index the index of the treeNode in cache
+	 */
 	public BTreeNode readNode(int index) {
 		for (int i = 0; i < cache.getSize(); i++) {
 			BTreeNode n = cache.getAtIndex(i);
