@@ -2,6 +2,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/**
+ * Gene Bank Search Driver Class
+ * 
+ * Reads in a set of queries in the form of keys and searches the B-Tree for
+ * matching values
+ * 
+ * 
+ * @author Andy Breland
+ *
+ */
+
 public class GeneBankSearch {
 	private static int sequenceLength;
 	private static Cache cache;
@@ -139,20 +150,10 @@ public class GeneBankSearch {
 			}
 		}
 	}
-	/*
-	 * 
-	 * public TreeObject search(BTreeNode root, TreeObject t){ int i =0; BTreeRW
-	 * diskWriter = new BTreeRW("diskWrite", cache.getSize(), sequenceLength);
-	 * while(i<root.getKeyCount() && (t.compareTo(root.getKey(i))>0)){ i++; }
-	 * if(i<root.getKeyCount() && t.compareTo(root.getKey(i))==0){ return
-	 * root.getKey(i); } if(root.isLeaf()){ return null; } else{ BTreeNode child =
-	 * diskWriter.diskRead(root.getChildPointer(i), degree); return search(child,
-	 * t); }
-	 * 
-	 * 
-	 * }
+	
+	/**
+	 * To be printed when args are not as expected
 	 */
-
 	private static void usageError() {
 		String s = "Java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]";
 		System.err.println(s);

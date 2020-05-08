@@ -1,10 +1,9 @@
 
 /**
+ * 	BTree Object class defines an object to be inserted into a BTree.
  * 
  * @author Andy Breland
- * 
- *         BTree Object class defines an object to be inserted into a BTree.
- *
+
  */
 public class TreeObject {
 	private long data;
@@ -63,6 +62,10 @@ public class TreeObject {
 		return duplicates;
 	}
 	
+	/**
+	 * 
+	 * @param data - a long representation of a DNA sequence to be stored
+	 */
 	public void setData(long data)
 	{
 		this.data = data;
@@ -85,9 +88,8 @@ public class TreeObject {
 
 
 	/**
-	 * @return the genome string and number of duplicates
+	 * @return the genome string and number of duplicates in the format - data: frequency
 	 */
-	
 	public String toString() {
 	String s = "";
 		GenBankSwitch convert = new GenBankSwitch();
