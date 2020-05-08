@@ -9,7 +9,7 @@ public class GeneBankCreateBTree {
     static int blockSize = 4096;
     public static final int MAX_SEQUENCE_LENGTH = 31;
     static File file1;
-    static int cacheSize;
+    static int cacheSize = 0;
     static boolean withCache;
     static int debugLevel;
     static int BTreeDegree;
@@ -85,7 +85,7 @@ public class GeneBankCreateBTree {
         BufferedReader bReader = null;
         try {
             //RandomAccessFile randomAccess = new RandomAccessFile(file, "rw");
-            tree = new BTree(BTreeDegree, fileString+".btree.data."+subSeqLen+"."+BTreeDegree, subSeqLen, 0, debugLevel);
+            tree = new BTree(BTreeDegree, fileString+".btree.data."+subSeqLen+"."+BTreeDegree, subSeqLen, cacheSize, debugLevel);
             bReader = new BufferedReader(new FileReader(file));
             boolean sequenceFound = false;
             String line = null;
