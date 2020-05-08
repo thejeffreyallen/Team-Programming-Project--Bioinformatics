@@ -175,13 +175,16 @@ public class GeneBankCreateBTree {
 
             }
             tree.writeRootToFile();
-
-			try {
-				tree.writeTreeDump();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            if(debugLevel == 1)
+            {
+            	try {
+    				tree.writeTreeDump();
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+            }
+			
 		}
 
 	}
