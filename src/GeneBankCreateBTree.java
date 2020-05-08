@@ -27,7 +27,7 @@ public class GeneBankCreateBTree {
     static int BTreeDegree;
 
     public static void main(String args[]) {
-
+    	long startTime = System.currentTimeMillis();
         if (args.length < 3 || args.length > 6) {
             System.err.println("Wrong number of arguments");
             badUsage();
@@ -184,6 +184,9 @@ public class GeneBankCreateBTree {
     				e.printStackTrace();
     			}
             }
+            long endTime = System.currentTimeMillis();
+    		long totalTime = endTime - startTime;
+    		System.out.println("Total run time is " + totalTime);
 			
 		}
 
