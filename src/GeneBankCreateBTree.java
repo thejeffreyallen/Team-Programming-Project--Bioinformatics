@@ -1,7 +1,18 @@
 import java.io.*;
-import java.nio.Buffer;
 
+/**
+ * Gene Bank Create B-Tree Class
+ * 
+ * Creates a new B-Tree binary file on disk given a .gbk file which contains a
+ * list of DNA strings containing A,T,C,G. The strings are cut into length of
+ * sequence length and stored in the B-Tree. Any duplicates are not stored
+ * twice, but their frequency is updated.
+ * 
+ * @author Abel Almeida
+ *
+ */
 public class GeneBankCreateBTree {
+
     static String file;
     static BTree tree;
     private static int degree;
@@ -134,9 +145,9 @@ public class GeneBankCreateBTree {
                               long numb = key.switchStringToLong(dnaSubStr.toString());
                               tree.insert(new TreeObject(numb, subSeqLen));
 
-                            System.out.printf("[%s]%n", dnaSubStr.toString());
-                            System.out.printf("Binary : %s%n", dnaSubBinary.toString());
-                            System.out.printf("Key: %s%n", key.switchStringToLong(dnaSubStr.toString()));
+                          //System.out.printf("[%s]%n", dnaSubStr.toString());
+                          //System.out.printf("Binary : %s%n", dnaSubBinary.toString());
+                          //System.out.printf("Key: %s%n", key.switchStringToLong(dnaSubStr.toString()));
                             dnaSubStr.deleteCharAt(0);
                             dnaSubBinary.delete(0, 2);
                         }
@@ -161,31 +172,29 @@ public class GeneBankCreateBTree {
 
             }
             tree.writeRootToFile();
-//            System.out.println(tree.toString());
-            
-            try {
+
+			try {
 				tree.writeTreeDump();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        }
+		}
 
-    }
+	}
 
-    private static void badUsage() {
-        StringBuilder str = new StringBuilder();
-        str.append("Usage: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debuglevel>]");
-        System.exit(1);
-    }
+	private static void badUsage() {
+		StringBuilder str = new StringBuilder();
+		str.append(
+				"Usage: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debuglevel>]");
+		System.out.println(str.toString());
+		System.exit(1);
+	}
 
-    private static int getOptimalDegree() {
-        
-        //TODO: calculate the amount of metadata of each node int m = 0;
-        //TODO: calculate the size of each key and TreeObject int s = 0;
-        //TODO: use this formula int retval = (int)Math.floor(((4092-m+s)/(2*s+8)));
-        
-        
-        return 0;
-    }
+	private static int getOptimalDegree() {
+		// Sets the degree size for the nodes as the optimal given our memory structure
+		// with a zero argument.
+		return degree = (blockSize - 6) / 40;
+
+	}
 }

@@ -9,7 +9,7 @@ import java.util.Stack;
 /**
  * BTree class for creating and managing a BTree
  * 
- * @author Jeff Allen, Abel Almedia, Andy Breland
+ * @author Jeff Allen, Abel Almeida, Andy Breland
  *
  */
 public class BTree {
@@ -39,6 +39,8 @@ public class BTree {
 	 * 
 	 */
 	public BTree(int degree, String fileName, int seqLength, int cacheSize, int debugLevel) {
+		if(debugLevel == 0)
+			System.err.println("Creating new B-Tree with degree "+degree+" and sequence length "+seqLength+".\n");
 		nodeCount = -1;
 		File file = new File(fileName);
 		this.degree = degree;
@@ -46,11 +48,13 @@ public class BTree {
 		this.seqLength = seqLength;
 		this.cacheSize = cacheSize;
 		this.debugLevel = debugLevel;
-		rw = new BTreeRW(fileName, cacheSize, seqLength);
+		rw = new BTreeRW(fileName, cacheSize, seqLength, debugLevel);
 		this.root = new BTreeNode(0, degree, true, true);
 		nodeCount++;
 		this.height = 0;
 		nodeIndexes = new ArrayList<Integer>();
+		if(debugLevel == 0)
+			System.err.println("Please wait while the B-Tree is populated and written to disk.\n");
 	}
 
 	/**
@@ -71,7 +75,7 @@ public class BTree {
 		this.fileName = file.getName();
 		this.cacheSize = cacheSize;
 		this.debugLevel = debugLevel;
-		rw = new BTreeRW(fileName, cacheSize, this);
+		rw = new BTreeRW(fileName, cacheSize, this, debugLevel);
 	}
 
 	public void writeRootToFile() {
@@ -82,19 +86,18 @@ public class BTree {
 		this.root = n;
 	}
 
-	/**
+	/** B-Tree Insert Method
 	 * 
 	 * @param k - TreeObject to insert
 	 */
 	public void insert(TreeObject k) {
-		// TODO - Add unimplemented method
 		BTreeNode r = root;
+		
 		if (r.isFull()) {
 			BTreeNode s = new BTreeNode(0, degree, true, false); // Allocate new node
 			nodeCount++;
 			root = s; // make s the new root
 			s.setIsLeaf(false);
-
 			// s.childNodes.add(r);
 			r.setParentPointer(s.getIndex());
 			r.setIsRoot(false);
@@ -111,7 +114,7 @@ public class BTree {
 		}
 	}
 
-	/**
+	/** B-Tree Insert Not Full Method
 	 * 
 	 * @param x - Node to enter key value in
 	 * @param k - Key value to enter into node x
@@ -166,7 +169,7 @@ public class BTree {
 	}
 
 	/**
-	 * THIS METHOD IS A MODIFIED METHOD BY JEFF
+	 * B-Tree Split Child Method
 	 * 
 	 * @param x - BTreeNode (parent)
 	 * @param y - BTreeNode to split (child)
@@ -212,7 +215,7 @@ public class BTree {
 	}
 
 	/**
-	 * Basic
+	 * Basic B-Tree search
 	 * 
 	 * @param root - Node to start search from
 	 * @param t - TreeObject to search for
@@ -236,38 +239,28 @@ public class BTree {
 			
 		
 	 }
-	 /*
-	public BTreeNode search(BTreeNode n, long k) {
-		int i = 0;
-		long val = 0;
 
-		// Loop through the keys in the node until the end is reached or key found is
-		while (i < n.keys.size() && k > n.keys.get(i).getKey()) {
-
-			i++;
-			val = n.keys.get(i).getKey();
-		}
-
-		if (k == val) {
-			return n;
-		}
-
-		if (n.isLeaf()) {
-			return null;
-		}
-
-		return rw.diskRead(n.getChildPointer(i), degree);
-	}
-*/
+	/**
+	 * 
+	 * @return - The degree of the B-Tree
+	 */
 	public int getDegree() {
 		return this.degree;
 	}
 	
+	/**
+	 * 
+	 * @param degree - degree to set
+	 */
 	public void setDegree(int degree)
 	{
 		this.degree = degree;
 	}
 	
+	/**
+	 * 
+	 * @param seq - sequence length to set
+	 */
 	public void setSeqLength(int seq)
 	{
 		this.seqLength = seq;
@@ -281,6 +274,10 @@ public class BTree {
 		return this.height;
 	}
 	
+	/**
+	 * 
+	 * @param height - Height of the B-Tree to set
+	 */
 	public void setHeight(int height)
 	{
 		this.height = height;
@@ -302,28 +299,12 @@ public class BTree {
 		return this.fileName;
 	}
 
+	/** Getter for sequence length
+	 * 
+	 * @return - seqLength. the sequence length of the keys
+	 */
 	public int getSequenceLength() {
 		return this.seqLength;
-	}
-
-	/**
-	 * 
-	 * @return - The optimal degree of the BTree
-	 */
-	public int calculateDegree() {
-		int result = 0;
-		int foundDegree = 0;
-		int blockSize = 4096;
-		while (result < blockSize) {
-
-			int keys = 18 * (2 * foundDegree - 1);
-			int children = 4 * keys + 1;
-			int nodes = (18 + 8 * (2 * degree - 1)) + 4 * (2 * degree) * children;
-			int metaData = 12 + (18 + 8 * (2 * degree - 1)) + 4 * (2 * degree);
-			result = (metaData + keys + children + nodes);
-			foundDegree++;
-		}
-		return foundDegree;
 	}
 
 	public String toString() {
@@ -350,6 +331,8 @@ public class BTree {
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("dump"), "UTF-8");
 		BufferedWriter bufWriter = new BufferedWriter(writer);
 		int keyIndex = 0;
+		if(debugLevel == 0)
+			System.err.println("Writing dump file.\n");
 		while (true) {
 			if (temp.isLeaf()) {
 				for (int i = 0; i < temp.keys.size(); i++) {

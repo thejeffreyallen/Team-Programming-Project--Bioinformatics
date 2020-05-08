@@ -2,6 +2,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/**
+ * Gene Bank Search Driver Class
+ * 
+ * Reads in a set of queries in the form of keys and searches the B-Tree for
+ * matching values
+ * 
+ * 
+ * @author Andy Breland
+ *
+ */
+
 public class GeneBankSearch {
 	private static int sequenceLength;
 	private static Cache cache;
@@ -34,7 +45,7 @@ public class GeneBankSearch {
 			cache = null;
 			if (isCache) {
 				try {
-					if (isCache && args[4] != null) {
+					if (isCache && args[3] != null) {
 						cache = new Cache(Integer.parseInt(args[3]));
 						cacheSize = cache.getSize();
 					} else {
@@ -46,11 +57,17 @@ public class GeneBankSearch {
 			}
 			else
 			{
+				try{
 				if(!isCache && Integer.parseInt(args[3]) != 0)
 				{
+					if(args[3]!=null){
 					System.err.println("Cache size argument is invalid due to arg[0] = 0\n");
 					usageError();
+					}
 				}
+			} catch(NumberFormatException e){
+				usageError();
+			}
 			}
 			isDebug = false;
 			try {
@@ -64,6 +81,10 @@ public class GeneBankSearch {
 				usageError();
 			}
 
+			if(args[3]==null){
+				cacheSize = 0;
+			}
+
 			String sequenceScan = args[1];
 
 			int count = 0;
@@ -71,7 +92,7 @@ public class GeneBankSearch {
 			int degreeCount = 0;
 			try {
 				while (count < sequenceScan.length()) {
-					if (sequenceCount == 3 && sequenceLength == 0) {
+					if (sequenceCount == 4 && sequenceLength == 0) {
 						int i = count;
 						String s = "";
 						while (sequenceScan.charAt(i) != '.') {
@@ -81,12 +102,15 @@ public class GeneBankSearch {
 						sequenceLength = Integer.parseInt(s);
 					}
 
-					if (degreeCount == 4 && degree == 0) {
+					if (degreeCount == 5 && degree == 0) {
 						int i = count;
 						String s = "";
-						while (sequenceScan.charAt(i) != '.') {
+						while (sequenceScan.charAt(i) != '.' && i < sequenceScan.length()) {
 							s += sequenceScan.charAt(i);
 							i++;
+							if (i == sequenceScan.length()) {
+								break;
+							}
 						}
 						degree = Integer.parseInt(s);
 
@@ -126,20 +150,10 @@ public class GeneBankSearch {
 			}
 		}
 	}
-	/*
-	 * 
-	 * public TreeObject search(BTreeNode root, TreeObject t){ int i =0; BTreeRW
-	 * diskWriter = new BTreeRW("diskWrite", cache.getSize(), sequenceLength);
-	 * while(i<root.getKeyCount() && (t.compareTo(root.getKey(i))>0)){ i++; }
-	 * if(i<root.getKeyCount() && t.compareTo(root.getKey(i))==0){ return
-	 * root.getKey(i); } if(root.isLeaf()){ return null; } else{ BTreeNode child =
-	 * diskWriter.diskRead(root.getChildPointer(i), degree); return search(child,
-	 * t); }
-	 * 
-	 * 
-	 * }
+	
+	/**
+	 * To be printed when args are not as expected
 	 */
-
 	private static void usageError() {
 		String s = "Java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]";
 		System.err.println(s);

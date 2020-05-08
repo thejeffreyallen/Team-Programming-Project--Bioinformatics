@@ -1,12 +1,10 @@
-
 import java.io.*;
 
 /**
+ * Class that reads and writes B-Tree nodes to a binary file on disk.
  * 
  * @author AndyBreland, Jeff Allen
- * 
- *         Class that reads and writes to disk.
- *
+
  */
 public class BTreeRW {
 
@@ -23,11 +21,13 @@ public class BTreeRW {
 	 * @param fileName  the name of the random access file
 	 * @param cacheSize the size of the cache
 	 */
-	public BTreeRW(String fileName, int cacheSize, int seqLength) {
+	public BTreeRW(String fileName, int cacheSize, int seqLength, int debugLevel) {
+		if (debugLevel == 0)
+			System.err.println("B-Tree reader / writer initialized. Writing to file: " + fileName + ".\n");
 		this.fileName = fileName;
 		this.cacheSize = cacheSize;
 		this.seqLength = seqLength;
-
+		this.debugLevel = debugLevel;
 		try {
 			randFile = new RandomAccessFile(fileName, "rwd");
 		} catch (FileNotFoundException e) {
@@ -40,13 +40,14 @@ public class BTreeRW {
 	/**
 	 * Secondary constructor to use when reading in a BTree from file
 	 * 
-	 * @param fileName - name of file to read tree from
+	 * @param fileName  - name of file to read tree from
 	 * @param cacheSize - size of cache to use
-	 * @param tree - tree to setup using data read from file
+	 * @param tree      - tree to setup using data read from file
 	 */
-	public BTreeRW(String fileName, int cacheSize, BTree tree) {
+	public BTreeRW(String fileName, int cacheSize, BTree tree, int debugLevel) {
 		this.fileName = fileName;
 		this.cacheSize = cacheSize;
+		this.debugLevel = debugLevel;
 		try {
 			randFile = new RandomAccessFile(fileName, "rwd");
 		} catch (FileNotFoundException e) {
@@ -64,6 +65,8 @@ public class BTreeRW {
 	 */
 	public void writeMetaData(BTree tree) {
 		try {
+			if (debugLevel == 0)
+				System.err.println("Writing meta data for B-Tree.\n");
 			randFile.seek(0); // Start at beginning of file
 
 			// Write B-tree meta data
@@ -81,23 +84,26 @@ public class BTreeRW {
 
 	}
 
-	/** Read a BTree's metaData from file
+	/**
+	 * Read a BTree's metaData from file
 	 * 
 	 * @param tree - BTree to create from reading file
 	 */
 	public void readMetaData(BTree tree) {
 		try {
+			if (debugLevel == 0)
+				System.err.println("Reading meta data for B-Tree.\n");
 			randFile.seek(0); // Start at beginning of file
 			// Read B-tree meta data
 			int foundDegree = randFile.readInt();
 			this.seqLength = randFile.readInt();
 			int height = randFile.readInt();
-			
+
 			tree.setDegree(foundDegree);
 			tree.setHeight(height);
 			tree.setSeqLength(seqLength);
 			tree.setRoot(diskRead(0, foundDegree));
-			
+
 		} catch (IOException e) {
 			System.err.println("An error occured when attempting to read BTree meta data");
 			e.printStackTrace();
@@ -113,11 +119,12 @@ public class BTreeRW {
 
 		if (n != null) {
 
-			if(cacheSize>0){
+			if (cacheSize > 0) {
 				cache.addObject(n);
 			}
 
 			try {
+
 				if (n.isRoot())
 					randFile.seek(12); // Offset for root is total size of tree meta data 4 * 4 * 4 = 12 bytes
 				else
@@ -174,9 +181,9 @@ public class BTreeRW {
 
 		BTreeNode newNode;
 
-		if(cacheSize>0){
+		if (cacheSize > 0) {
 			newNode = readNode(index);
-			if(newNode != null){
+			if (newNode != null) {
 				return newNode;
 			}
 		}
@@ -195,8 +202,6 @@ public class BTreeRW {
 			} else {
 				randFile.seek(12); // Offset for root is total size of tree meta data 4 * 4 * 4 = 12 bytes
 			}
-
-			// randFile.readUTF(); // for debugging
 			// Read node meta data
 			newNode.setIndex(randFile.readInt());
 			newNode.setIsLeaf(randFile.readBoolean());
@@ -238,11 +243,7 @@ public class BTreeRW {
 		}
 		if (newNode.keys.size() == 0)
 			return null;
-//		System.out.println("------");
-//		System.out.println(newNode.toString());
-//		System.out.println("------");
-
-		if(cacheSize>0){
+		if (cacheSize > 0) {
 			cache.addObject(newNode);
 		}
 		return newNode;
@@ -267,19 +268,6 @@ public class BTreeRW {
 
 		}
 		return null;
-	}
-
-	private int parent(int i) {
-		int p = i / 2;
-		return p;
-	}
-
-	private int left(int i) {
-		return 2 * i;
-	}
-
-	private int right(int i) {
-		return (2 * i) + 1;
 	}
 
 }

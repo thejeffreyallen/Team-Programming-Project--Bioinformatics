@@ -1,16 +1,16 @@
 import java.util.ArrayList;
 
 /**
+ * BTree Node Class to define a node and manage the data within.
  * 
  * @author Jeff Allen
  * 
- *         BTree Node Class to define a node and manage the data within.
- *
  */
 
 public class BTreeNode implements Comparable<BTreeNode> {
 
-	private int degree, numKeys, maxKeys, index, parent, nodeLocation; //is nodeLocation not the same as either index or offset?
+	private int degree, numKeys, maxKeys, index, parent, nodeLocation; // is nodeLocation not the same as either index
+																		// or offset?
 	int byteOffSet; // points to the first byte of the node
 	private boolean isLeaf, isRoot;
 	ArrayList<TreeObject> keys;
@@ -37,6 +37,17 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		parent = -1;
 	}
 
+	/**
+	 * Secondary constructor
+	 * 
+	 * @param degree     - degree of the tree / node.
+	 * @param isRoot     - true if it is the root of the B-Tree, false otherwise.
+	 * @param isLeaf     - true if it is an internal node (neither top or bottom)of
+	 *                     the B-Tree, false otherwise.
+	 * @param filename   - name of file where the node will be written to on disk.
+	 * @param byteOffSet - byte offset in the binary file which is where this node's
+	 *                     data will begin.
+	 */
 	public BTreeNode(int degree, boolean isRoot, boolean isLeaf, String filename, int byteOffSet) {
 		this.degree = degree;
 		this.isRoot = isRoot;
@@ -48,17 +59,22 @@ public class BTreeNode implements Comparable<BTreeNode> {
 		parent = -1;
 		this.byteOffSet = byteOffSet;
 	}
-	
-	public int getDegree()
-	{
+
+	/**
+	 * 
+	 * @return - degree of the node / tree
+	 */
+	public int getDegree() {
 		return this.degree;
 	}
-	
-	public void setIndex(int i)
-	{
+
+	/**
+	 * 
+	 * @param i - index to set
+	 */
+	public void setIndex(int i) {
 		this.index = i;
 	}
-	
 
 	/**
 	 * Return the number of keys stored in node
@@ -102,7 +118,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	}
 
 	public void insertKey(int index, TreeObject k) {
-			this.keys.add(index, k);
+		this.keys.add(index, k);
 	}
 
 	public void removekey(int i) {
@@ -185,7 +201,7 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 * @return - True if full, false otherwise
 	 */
 	public boolean isFull() {
-		return keys.size() == 2*degree-1;
+		return keys.size() == 2 * degree - 1;
 	}
 
 	/**
@@ -238,17 +254,19 @@ public class BTreeNode implements Comparable<BTreeNode> {
 	 * 
 	 * @param i the location of the node i memory
 	 */
-	public void setLocation(int i){
+	public void setLocation(int i) {
 		this.nodeLocation = i;
 	}
+
 	/**
 	 * 
 	 * @return the location of the node
 	 */
-	public int getLocation(){
+	public int getLocation() {
 		return nodeLocation;
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < keys.size(); i++) {

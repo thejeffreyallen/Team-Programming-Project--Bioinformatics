@@ -104,6 +104,7 @@ public class Cache<T> {
 		return cache.contains(object);
 	}
 	
+	@Override
 	public String toString() {
 		return cache.toString();
 	}
