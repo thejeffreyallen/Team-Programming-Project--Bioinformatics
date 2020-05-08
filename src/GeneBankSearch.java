@@ -46,6 +46,7 @@ public class GeneBankSearch {
 			}
 			else
 			{
+				try{
 				if(!isCache && Integer.parseInt(args[3]) != 0)
 				{
 					if(args[3]!=null){
@@ -53,6 +54,9 @@ public class GeneBankSearch {
 					usageError();
 					}
 				}
+			} catch(NumberFormatException e){
+				usageError();
+			}
 			}
 			isDebug = false;
 			try {
@@ -64,6 +68,10 @@ public class GeneBankSearch {
 				}
 			} catch (NumberFormatException e) {
 				usageError();
+			}
+
+			if(args[3]==null){
+				cacheSize = 0;
 			}
 
 			String sequenceScan = args[1];
