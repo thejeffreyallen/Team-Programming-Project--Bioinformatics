@@ -20,7 +20,8 @@ public class GeneBankCreateBTree {
     static int blockSize = 4096;
     public static final int MAX_SEQUENCE_LENGTH = 31;
     static File file1;
-    static int cacheSize;
+    private static Cache cache;
+    static int cacheSize = 0;
     static boolean withCache;
     static int debugLevel;
     static int BTreeDegree;
@@ -46,13 +47,14 @@ public class GeneBankCreateBTree {
         }
 
         // cache
-
+        cache = null;
         try {
             if (args[3].equals("1")) {
                 withCache = false;
             } else {
                 withCache = true;
-                cacheSize = Integer.parseInt(args[4]);
+                cache = new Cache(Integer.parseInt(args[4]));
+                cacheSize = cache.getCount();
             }
 
         } catch (NumberFormatException e) {
@@ -96,7 +98,7 @@ public class GeneBankCreateBTree {
         BufferedReader bReader = null;
         try {
             //RandomAccessFile randomAccess = new RandomAccessFile(file, "rw");
-            tree = new BTree(BTreeDegree, fileString+".btree.data."+subSeqLen+"."+BTreeDegree, subSeqLen, 0, debugLevel);
+            tree = new BTree(BTreeDegree, fileString+".btree.data."+subSeqLen+"."+BTreeDegree, subSeqLen, cacheSize, debugLevel);
             bReader = new BufferedReader(new FileReader(file));
             boolean sequenceFound = false;
             String line = null;
@@ -148,6 +150,7 @@ public class GeneBankCreateBTree {
                           //System.out.printf("[%s]%n", dnaSubStr.toString());
                           //System.out.printf("Binary : %s%n", dnaSubBinary.toString());
                           //System.out.printf("Key: %s%n", key.switchStringToLong(dnaSubStr.toString()));
+
                             dnaSubStr.deleteCharAt(0);
                             dnaSubBinary.delete(0, 2);
                         }
@@ -196,5 +199,15 @@ public class GeneBankCreateBTree {
 		// with a zero argument.
 		return degree = (blockSize - 6) / 40;
 
-	}
+    private static void badUsage() {
+        StringBuilder str = new StringBuilder();
+        str.append("Usage: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debuglevel>]");
+        System.exit(1);
+    }
+
+    private static int getOptimalDegree() {
+       //Sets the degree size for the nodes as the optimal given our memory structure with a zero argument.
+        return   degree = (blockSize - 6) / 40;
+
+    }
 }
