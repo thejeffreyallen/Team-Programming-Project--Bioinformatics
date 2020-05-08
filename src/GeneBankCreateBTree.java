@@ -81,11 +81,11 @@ public class GeneBankCreateBTree {
             System.err.println("File does not exist");
             badUsage();
         }
-
+        String fileString = file.substring(file.indexOf("/")+1, file.indexOf("k")+1);
         BufferedReader bReader = null;
         try {
             //RandomAccessFile randomAccess = new RandomAccessFile(file, "rw");
-            tree = new BTree(BTreeDegree, "xyz.gbk.btree.data."+subSeqLen+"."+BTreeDegree, subSeqLen, 0, debugLevel);
+            tree = new BTree(BTreeDegree, fileString+".btree.data."+subSeqLen+"."+BTreeDegree, subSeqLen, 0, debugLevel);
             bReader = new BufferedReader(new FileReader(file));
             boolean sequenceFound = false;
             String line = null;
@@ -161,7 +161,7 @@ public class GeneBankCreateBTree {
 
             }
             tree.writeRootToFile();
-            System.out.println(tree.toString());
+//            System.out.println(tree.toString());
             
             try {
 				tree.writeTreeDump();
