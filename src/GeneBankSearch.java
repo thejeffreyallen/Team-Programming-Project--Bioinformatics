@@ -71,7 +71,7 @@ public class GeneBankSearch {
 			int degreeCount = 0;
 			try {
 				while (count < sequenceScan.length()) {
-					if (sequenceCount == 3 && sequenceLength == 0) {
+					if (sequenceCount == 4 && sequenceLength == 0) {
 						int i = count;
 						String s = "";
 						while (sequenceScan.charAt(i) != '.') {
@@ -81,12 +81,15 @@ public class GeneBankSearch {
 						sequenceLength = Integer.parseInt(s);
 					}
 
-					if (degreeCount == 4 && degree == 0) {
+					if (degreeCount == 5 && degree == 0) {
 						int i = count;
 						String s = "";
-						while (sequenceScan.charAt(i) != '.') {
+						while (sequenceScan.charAt(i) != '.' && i < sequenceScan.length()) {
 							s += sequenceScan.charAt(i);
 							i++;
+							if (i == sequenceScan.length()) {
+								break;
+							}
 						}
 						degree = Integer.parseInt(s);
 
