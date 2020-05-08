@@ -259,7 +259,7 @@ public class BTreeRW {
 
 	public BTreeNode readNode(int index) {
 		for (int i = 0; i < cache.getSize(); i++) {
-			BTreeNode n = cache.getAtIndex(index);
+			BTreeNode n = cache.getAtIndex(i);
 			if (n.getIndex() == index) {
 				cache.removeObject(n);
 				cache.addObject(n);
