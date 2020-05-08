@@ -41,7 +41,9 @@ public class Cache<T> {
 	}
 
 	
-
+    public int getCount(){
+		return count;
+	}
 	/**
 	 * Adds an object to the cache
 	 * 
