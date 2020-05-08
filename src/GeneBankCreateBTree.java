@@ -9,6 +9,7 @@ public class GeneBankCreateBTree {
     static int blockSize = 4096;
     public static final int MAX_SEQUENCE_LENGTH = 31;
     static File file1;
+    private static Cache cache;
     static int cacheSize = 0;
     static boolean withCache;
     static int debugLevel;
@@ -35,13 +36,14 @@ public class GeneBankCreateBTree {
         }
 
         // cache
-
+        cache = null;
         try {
             if (args[3].equals("1")) {
                 withCache = false;
             } else {
                 withCache = true;
-                cacheSize = Integer.parseInt(args[4]);
+                cache = new Cache(Integer.parseInt(args[4]));
+                cacheSize = cache.getCount();
             }
 
         } catch (NumberFormatException e) {
@@ -180,12 +182,8 @@ public class GeneBankCreateBTree {
     }
 
     private static int getOptimalDegree() {
-        
-        //TODO: calculate the amount of metadata of each node int m = 0;
-        //TODO: calculate the size of each key and TreeObject int s = 0;
-        //TODO: use this formula int retval = (int)Math.floor(((4092-m+s)/(2*s+8)));
-        
-        
-        return 0;
+       //Sets the degree size for the nodes as the optimal given our memory structure with a zero argument.
+        return   degree = (blockSize - 6) / 40;
+
     }
 }
