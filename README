@@ -208,8 +208,8 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
 
         Run using the query4 file with a BTreeFile of sequence length 4
         GeneBankSearch:
-            Without cache: 0.127 seconds
+            Without cache: 127 ms
             
-            Cache Size 100: 0.120 seconds
+            Cache Size 100: 120 ms
 
-            Cache Size 500: 0.144 seconds
+            Cache Size 500: 144 ms
