@@ -91,8 +91,8 @@ public class BTreeRW {
 	 */
 	public void readMetaData(BTree tree) {
 		try {
-			if (debugLevel == 0)
-				System.err.println("Reading meta data for B-Tree.\n");
+//			if (debugLevel == 0)
+//				System.err.println("Reading meta data for B-Tree.\n");
 			randFile.seek(0); // Start at beginning of file
 			// Read B-tree meta data
 			int foundDegree = randFile.readInt();

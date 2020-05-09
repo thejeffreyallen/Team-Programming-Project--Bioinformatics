@@ -25,7 +25,7 @@ public class GeneBankSearch {
 
 	@SuppressWarnings("rawtypes")
 	public static void main(String args[]) {
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis(); // used for timing
 		if (args.length < 3 || args.length > 5) {
 			usageError();
 		} else {
@@ -152,9 +152,9 @@ public class GeneBankSearch {
 				usageError();
 			}
 		}
-		long endTime = System.currentTimeMillis();
-		long totalTime = endTime - startTime;
-		System.out.println("Total run time is " + totalTime);
+//		long endTime = System.currentTimeMillis(); // used for timing
+//		long totalTime = endTime - startTime;
+//		System.out.println("Total run time is " + totalTime);
 	}
 	
 	/**
