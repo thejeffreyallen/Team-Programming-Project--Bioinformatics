@@ -197,19 +197,41 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
         it if it exists. We add the TreeNode to the cache in the write method
         and at the end of read method.
 
+	Local Machine:
         Times are run with test3.gbk with a degree of 4 and sequence length 11
         
         GeneBankCreateBTree:
-            Without Cache: 17826 ms
+            Without Cache: 1021 ms
 
-            Cache Size 100: 9726 ms
+            Cache Size 100: 978 ms
 
-            Cache Size 500: 6449 ms
+            Cache Size 500: 1692 ms
 
         Run using the query4 file with a BTreeFile of sequence length 4
         GeneBankSearch:
-            Without cache: 127 ms
+            Without cache: 34 ms
             
-            Cache Size 100: 120 ms
+            Cache Size 100: 33 ms
 
-            Cache Size 500: 144 ms
+            Cache Size 500: 47 ms
+	   
+	Onyx:
+	 Times are run with test3.gbk with a degree of 4 and sequence length 11
+        
+        GeneBankCreateBTree:
+            Without Cache: 46348 ms
+
+            Cache Size 100: 49234 ms
+
+            Cache Size 500: 61604 ms
+
+        Run using the query4 file with a BTreeFile of sequence length 4
+        GeneBankSearch:
+            Without cache: 72 ms
+            
+            Cache Size 100: 78 ms
+
+            Cache Size 500: 71 ms
+	    
+	 GeneBankCreateTree has a runtime of 2 hrs and 48 minutes when ran with test5.gbk.
+	
