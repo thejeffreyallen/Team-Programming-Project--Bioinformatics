@@ -233,5 +233,6 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
 
             Cache Size 500: 71 ms
 	    
-	 GeneBankCreateTree has a runtime of 2 hrs and 48 minutes when ran with test5.gbk.
+	 Test5.gbk GeneBankCreateBTree runtime:
+	 2 hrs 48 minutes
 	
