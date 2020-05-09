@@ -161,7 +161,7 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
 
 
     Optimal BTree Degree
-        ====================
+    --------------------
 
             Since the block size of the operating system in which this BTree will reside
             contains 4096 bytes and the Max Size of a BTreeNode is 40T Bytes, the
@@ -190,7 +190,7 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
                             = 16 Bytes
 
     Cache Implementation 
-        ====================
+    --------------------
 
         We implemented a cache in our reading and writing to disk. In the read 
         method we search for a TreeNode based on index in the cache and return 
