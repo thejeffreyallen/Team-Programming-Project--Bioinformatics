@@ -42,11 +42,12 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
 
    Data Type Calculations
    ----------------------
-        - boolean:      Takes up 1 bit (1 true, 0 false), so 1 Byte is needed at maximum
-        - int:          Takes up 32 bits, so 32 / 8 = 4 Bytes of data needed
-        - long:         Takes up 64 bits, so 64 / 8 = 8 Bytes of data needed
-        - ArrayList<n>: Takes up n * S Bytes, so nS Bytes of data are needed
-        - BTreeObject:  Contains a long and an two ints, so 16 Bytes of data are needed
+        - boolean:      Since we're using a byteBuffer, each boolean is 
+			represented as an int which takes 4 bytes each.
+        - int:          Takes up 32 bits, so 32 / 8 = 4 Bytes of data needed.
+        - long:         Takes up 64 bits, so 64 / 8 = 8 Bytes of data needed.
+        - ArrayList<n>: Takes up n * S Bytes, so nS Bytes of data are needed.
+        - BTreeObject:  Contains a long and an two ints, so 16 Bytes of data are needed.
 
    BTree Class
    -----------
@@ -121,11 +122,11 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
                 | ~~   Variable  ~~ : ~~ Offset ~~ |  Child Pointer  | TreeObject keys |
                 |     index         :     0x12     |   Arraylist     |   ArrayList     |
                 |     isLeaf        :     0x16     | 1, 2, ..., 2T   | 1, 2, ..., 2T-1 |
-                |     isRoot        :     0x17     |                 |                 |
-                | parentNodePointer :     0x18     |                 |                 |
-                |     key size      :     0x22     |                 |                 |
-                |    childNodePt    :     0x26     |                 |                 |
-                |    key size       :     0x30     |                 |                 |
+                |     isRoot        :     0x20     |                 |                 |
+                | parentNodePointer :     0x24     |                 |                 |
+                |     key size      :     0x28     |                 |                 |
+                |    childNodePt    :     0x32     |                 |                 |
+                |    key size       :     0x36     |                 |                 |
                 +----------------------------------+-----------------+-----------------+
 
    TreeObject Class
@@ -233,6 +234,6 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
 
             Cache Size 500: 71 ms
 	    
-	 Test5.gbk GeneBankCreateBTree runtime:
+	 Test5.gbk GeneBankCreateBTree runtime on onyx:
 	 2 hrs 48 minutes
 	
