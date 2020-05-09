@@ -207,6 +207,6 @@ public class GeneBankCreateBTree {
 	private static int getOptimalDegree() {
         // Sets the degree size for the nodes as the optimal given our memory structure
         // with a zero argument.
-        return degree = (blockSize - 6) / 40;
+        return 102;
     }
 }
