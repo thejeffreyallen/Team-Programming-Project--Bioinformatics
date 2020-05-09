@@ -188,3 +188,28 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
 
                 Extra Space = 4096 - BTreeNodeSize(102)
                             = 24 Bytes
+
+    Cache Implementation 
+        ====================
+
+        We implemented a cache in our reading and writing to disk. In the read 
+        method we search for a TreeNode based on index in the cache and return 
+        it if it exists. We add the TreeNode to the cache in the write method
+        and at the end of read method.
+
+        Times are run with test3.gbk with a degree of 4 and sequence length 11
+        
+        GeneBankCreateBTree:
+            Without Cache: 17826 ms
+
+            Cache Size 100: 9726 ms
+
+            Cache Size 500: 6449 ms
+
+        Run using the query4 file with a BTreeFile of sequence length 4
+        GeneBankSearch:
+            Without cache: 127 ms
+            
+            Cache Size 100: 120 ms
+
+            Cache Size 500: 144 ms

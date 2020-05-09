@@ -331,8 +331,8 @@ public class BTree {
 		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream("dump"), "UTF-8");
 		BufferedWriter bufWriter = new BufferedWriter(writer);
 		int keyIndex = 0;
-		if(debugLevel == 0)
-			System.err.println("Writing dump file.\n");
+		if(debugLevel == 1)
+			System.out.println("Writing dump file...\n");
 		while (true) {
 			if (temp.isLeaf()) {
 				for (int i = 0; i < temp.keys.size(); i++) {
@@ -370,6 +370,7 @@ public class BTree {
 
 		}
 		bufWriter.close();
+		System.out.println("Done.\n");
 	}
 
 }

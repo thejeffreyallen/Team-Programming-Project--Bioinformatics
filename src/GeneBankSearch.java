@@ -25,7 +25,7 @@ public class GeneBankSearch {
 
 	@SuppressWarnings("rawtypes")
 	public static void main(String args[]) {
-
+		long startTime = System.currentTimeMillis();
 		if (args.length < 3 || args.length > 5) {
 			usageError();
 		} else {
@@ -85,47 +85,50 @@ public class GeneBankSearch {
 				cacheSize = 0;
 			}
 
-			String sequenceScan = args[1];
 
-			int count = 0;
-			int sequenceCount = 0;
-			int degreeCount = 0;
-			try {
-				while (count < sequenceScan.length()) {
-					if (sequenceCount == 4 && sequenceLength == 0) {
-						int i = count;
-						String s = "";
-						while (sequenceScan.charAt(i) != '.') {
-							s += sequenceScan.charAt(i);
-							i++;
-						}
-						sequenceLength = Integer.parseInt(s);
-					}
+			
+			// String sequenceScan = args[1];
 
-					if (degreeCount == 5 && degree == 0) {
-						int i = count;
-						String s = "";
-						while (sequenceScan.charAt(i) != '.' && i < sequenceScan.length()) {
-							s += sequenceScan.charAt(i);
-							i++;
-							if (i == sequenceScan.length()) {
-								break;
-							}
-						}
-						degree = Integer.parseInt(s);
+			// int count = 0;
+			// int sequenceCount = 0;
+			// int degreeCount = 0;
+			// try {
+			// 	while (count < sequenceScan.length()) {
+			// 		if (sequenceCount == 4 && sequenceLength == 0) {
+			// 			int i = count;
+			// 			String s = "";
+			// 			while (sequenceScan.charAt(i) != '.') {
+			// 				s += sequenceScan.charAt(i);
+			// 				i++;
+			// 			}
+			// 			sequenceLength = Integer.parseInt(s);
+			// 		}
 
-					}
-					if (sequenceScan.charAt(count) == '.') {
-						sequenceCount++;
-						degreeCount++;
-					}
-					count++;
+			// 		if (degreeCount == 5 && degree == 0) {
+			// 			int i = count;
+			// 			String s = "";
+			// 			while (sequenceScan.charAt(i) != '.' && i < sequenceScan.length()) {
+			// 				s += sequenceScan.charAt(i);
+			// 				i++;
+			// 				if (i == sequenceScan.length()) {
+			// 					break;
+			// 				}
+			// 			}
+			// 			degree = Integer.parseInt(s);
 
-				}
-			} catch (NumberFormatException e) {
-				System.out.println("Make sure file is in this format: xyz.gbk.btree.data.k.t.");
-				System.out.println("Where sequence length is k and BTree Degree is t");
-			}
+			// 		}
+			// 		if (sequenceScan.charAt(count) == '.') {
+			// 			sequenceCount++;
+			// 			degreeCount++;
+			// 		}
+			// 		count++;
+
+			// 	}
+			// } catch (NumberFormatException e) {
+			// 	System.out.println("Make sure file is in this format: xyz.gbk.btree.data.k.t.");
+			// 	System.out.println("Where sequence length is k and BTree Degree is t");
+			// }
+			
 
 			BTree b = new BTree(treeFile, cacheSize, debugLevel);
 			GenBankSwitch genSwitch = new GenBankSwitch();
@@ -149,6 +152,9 @@ public class GeneBankSearch {
 				usageError();
 			}
 		}
+		long endTime = System.currentTimeMillis();
+		long totalTime = endTime - startTime;
+		System.out.println("Total run time is " + totalTime);
 	}
 	
 	/**

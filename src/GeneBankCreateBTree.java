@@ -27,7 +27,7 @@ public class GeneBankCreateBTree {
     static int BTreeDegree;
 
     public static void main(String args[]) {
-
+    	long startTime = System.currentTimeMillis();
         if (args.length < 3 || args.length > 6) {
             System.err.println("Wrong number of arguments");
             badUsage();
@@ -36,8 +36,12 @@ public class GeneBankCreateBTree {
 
         try {
             int degree = Integer.parseInt(args[1]);
+            if(degree == 1){
+                System.out.println("Degree cannot be 1");
+                badUsage();
+            }
             if (degree < 0) badUsage();
-            else if (degree == 0) { 
+            else if (degree == 0) {
             	BTreeDegree = getOptimalDegree();
             	System.out.println("An optimal degree of "+BTreeDegree+" has been found.");
             }
@@ -65,7 +69,7 @@ public class GeneBankCreateBTree {
         // sequencLength
         try {
             subSeqLen = Integer.parseInt(args[3]);
-            if (subSeqLen < 1 && subSeqLen > 31) {
+            if (subSeqLen < 1 || subSeqLen > 31) {
                 System.err.println("DNA Squence length should be between 1 - 31");
                 badUsage();
             }
@@ -175,13 +179,19 @@ public class GeneBankCreateBTree {
 
             }
             tree.writeRootToFile();
-
-			try {
-				tree.writeTreeDump();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            if(debugLevel == 1)
+            {
+            	try {
+    				tree.writeTreeDump();
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+            }
+            long endTime = System.currentTimeMillis();
+    		long totalTime = endTime - startTime;
+    		System.out.println("Total run time is " + totalTime);
+			
 		}
 
 	}
@@ -195,19 +205,8 @@ public class GeneBankCreateBTree {
 	}
 
 	private static int getOptimalDegree() {
-		// Sets the degree size for the nodes as the optimal given our memory structure
-		// with a zero argument.
-		return degree = (blockSize - 6) / 40;
-
-    private static void badUsage() {
-        StringBuilder str = new StringBuilder();
-        str.append("Usage: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debuglevel>]");
-        System.exit(1);
-    }
-
-    private static int getOptimalDegree() {
-       //Sets the degree size for the nodes as the optimal given our memory structure with a zero argument.
-        return   degree = (blockSize - 6) / 40;
-
+        // Sets the degree size for the nodes as the optimal given our memory structure
+        // with a zero argument.
+        return degree = (blockSize - 6) / 40;
     }
 }

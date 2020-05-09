@@ -35,6 +35,11 @@ public class Cache<T> {
 		return temp;
 	}
 	
+	/**
+	 * 
+	 * @param index the index of the object in the list
+	 * @return the object at that index
+	 */
 	public T getAtIndex(int index){
 		T retval = cache.get(index);
 		return retval;
