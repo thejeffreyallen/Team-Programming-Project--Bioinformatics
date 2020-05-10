@@ -42,11 +42,12 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
 
    Data Type Calculations
    ----------------------
-        - boolean:      Takes up 1 bit (1 true, 0 false), so 1 Byte is needed at maximum
-        - int:          Takes up 32 bits, so 32 / 8 = 4 Bytes of data needed
-        - long:         Takes up 64 bits, so 64 / 8 = 8 Bytes of data needed
-        - ArrayList<n>: Takes up n * S Bytes, so nS Bytes of data are needed
-        - BTreeObject:  Contains a long and an two ints, so 16 Bytes of data are needed
+        - boolean:      Since we're using a byteBuffer, each boolean is 
+			represented as an int which takes 4 bytes each.
+        - int:          Takes up 32 bits, so 32 / 8 = 4 Bytes of data needed.
+        - long:         Takes up 64 bits, so 64 / 8 = 8 Bytes of data needed.
+        - ArrayList<n>: Takes up n * S Bytes, so nS Bytes of data are needed.
+        - BTreeObject:  Contains a long and an two ints, so 16 Bytes of data are needed.
 
    BTree Class
    -----------
@@ -84,21 +85,21 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
             ++ Instance Variables ++
 
                 - int index:                            4 Bytes
-                - boolean isLeafNode:                   1 Byte   +
-                - boolean isRoot:                       1 Byte   +
+                - boolean isLeafNode:                   4  Byte   +
+                - boolean isRoot:                       4 Byte   +
                 - int parentNodePointer:                4 Bytes
                 ----------------------------------------------------
-                Total Meta Data:                        10 Bytes
+                Total Meta Data:                        16 Bytes
 
                 - ArrayList<Integer> childNodePointers:  4 * (2T) Bytes
                 - ArrayList<BTreeObject> keys:          16 * (2T - 1) Bytes  +
                 ----------------------------------------------------------------
                 Node Objects and Child Pointers:        40T - 16 Bytes
 
-                - META DATA:                           10 Bytes
+                - META DATA:                           16 Bytes
                 - Node Objects and Child Pointers:     40T - 16 Bytes  +
                 ----------------------------------------------------------
-                Total BTreeNode Size:                  40T - 6 Bytes
+                Total BTreeNode Size:                  40T Bytes
 
             ++ Instance Variable Descriptions ++
 
@@ -121,11 +122,11 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
                 | ~~   Variable  ~~ : ~~ Offset ~~ |  Child Pointer  | TreeObject keys |
                 |     index         :     0x12     |   Arraylist     |   ArrayList     |
                 |     isLeaf        :     0x16     | 1, 2, ..., 2T   | 1, 2, ..., 2T-1 |
-                |     isRoot        :     0x17     |                 |                 |
-                | parentNodePointer :     0x18     |                 |                 |
-                |     key size      :     0x22     |                 |                 |
-                |    childNodePt    :     0x26     |                 |                 |
-                |    key size       :     0x30     |                 |                 |
+                |     isRoot        :     0x20     |                 |                 |
+                | parentNodePointer :     0x24     |                 |                 |
+                |     key size      :     0x28     |                 |                 |
+                |    childNodePt    :     0x32     |                 |                 |
+                |    key size       :     0x36     |                 |                 |
                 +----------------------------------+-----------------+-----------------+
 
    TreeObject Class
@@ -161,18 +162,18 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
 
 
     Optimal BTree Degree
-        ====================
+    --------------------
 
             Since the block size of the operating system in which this BTree will reside
-            contains 4096 bytes and the Max Size of a BTreeNode is 40T - 6 Bytes, the
+            contains 4096 bytes and the Max Size of a BTreeNode is 40T Bytes, the
             following calculations will provide the optimal degree for the BTree.
 
-                     4096 >= 40T - 6
-                     4102 >= 40T
-                   102.55 >= T
+                     4096 >= 40T
+                     4096 >= 40T
+                    102.4 >= T
 
-                floor(102.55) = T
-                          102 = T
+              floor(102.4) = T
+                       102 = T
 
             Given the above calculations the optimal degree of this BTree for a block
             size of 4096 is 102.
@@ -181,16 +182,16 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
             BTree having a degree of 102 and the block size being 4096 the following
             calculations will show the number of unused bytes within a BTreeNode:
 
-                BTreeNodeSize(T)   = 40T - 6
-                BTreeNodeSize(102) = 40(102) - 6
-                                   = 4080 - 6
-                                   = 4074
+                BTreeNodeSize(T)   = 40T
+                BTreeNodeSize(102) = 40(102)
+                                   = 4080
+                                   = 4080
 
                 Extra Space = 4096 - BTreeNodeSize(102)
-                            = 24 Bytes
+                            = 16 Bytes
 
     Cache Implementation 
-        ====================
+    --------------------
 
         We implemented a cache in our reading and writing to disk. In the read 
         method we search for a TreeNode based on index in the cache and return 
@@ -233,6 +234,6 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
 
             Cache Size 500: 71 ms
 	    
-	 Test5.gbk GeneBankCreateBTree runtime:
+	 Test5.gbk GeneBankCreateBTree runtime on onyx:
 	 2 hrs 48 minutes
 	
